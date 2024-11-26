@@ -141,13 +141,21 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
     data: Partial<DOMAIN_MODEL_TYPE>,
   ): Promise<DOMAIN_MODEL_TYPE> {
     // Prepare columns and placeholders for the insert statement
-    const columns = Object.keys(data)
-      .map((key) => `"${key}"`)
-      .join(', ');
+    function toSnakeCase(str: string): string {
+      return str
+        .replace(/([A-Z])/g, '_$1')
+        .replace(/^_/, '')
+        .toLowerCase();
+    }
+
+    const columns = Object.keys(data).map(toSnakeCase).join(', ');
+
     const placeholders = Object.keys(data)
       .map((_, index) => `$${index + 1}`)
       .join(', ');
     const values = Object.values(data) as any[];
+
+    console.log('values', values);
 
     // Build the SQL query
     const sql = `

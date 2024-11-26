@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PersistentDriverService<T> implements IPersistentDriver<T> {
-  constructor(private readonly drizzleService: DrizzleService) {}
+  constructor(public readonly drizzleService: DrizzleService) {}
 
   /**
    * Executes a raw SQL query with the provided values.
@@ -25,7 +25,10 @@ export class PersistentDriverService<T> implements IPersistentDriver<T> {
       if (typeof value === 'number') return value.toString();
       if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
       if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
-      throw new Error(`Unsupported value type: ${typeof value}`);
+      if (typeof value === 'object') {
+        return `ARRAY[${value.map((v) => escapeValue(v)).join(',')}]`;
+      } // throw new Error(`Unsupported value type: ${typeof value}`);
+      return value;
     }
 
     const safeSql = buildSafeQuery(sql, values);

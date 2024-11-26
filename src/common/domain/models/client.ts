@@ -43,8 +43,8 @@ export interface CreateClientDomainDto {
   name: string;
   type: ClientType;
   redirectUris?: string[];
-  allowedScopes: string[];
-  allowedGrants: GrantType[];
+  allowedScopes?: string[];
+  allowedGrants?: GrantType[];
   settings?: Partial<ClientSettings>;
 }
 

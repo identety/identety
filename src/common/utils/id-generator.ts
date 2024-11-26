@@ -22,7 +22,7 @@ export class IdGenerator {
 
   // Generate client secret (longer, more secure)
   static generateClientSecret(options: GenerateOptions = {}): string {
-    const { length = 32, prefix = 'secret', separator = '_' } = options;
+    const { length = 55, prefix = 'secret', separator = '_' } = options;
 
     const randomPart = crypto
       .randomBytes(length)

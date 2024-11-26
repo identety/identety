@@ -1,3 +1,9 @@
+import {
+  clientsTable,
+  tenantsTable,
+  usersTable,
+} from '@/common/persistence/drizzle/schemas/schemas';
+
 export * from './schemas/schemas';
 
 export enum DatabaseTableName {
@@ -7,9 +13,7 @@ export enum DatabaseTableName {
 }
 
 export const drizzleSchemaTableMap = {
-  // [DatabaseTableName.users]: userTable,
-  // [DatabaseTableName.projects]: projectsTable,
-  // [DatabaseTableName.tasks]: tasksTable,
-  // [DatabaseTableName.task_statuses]: taskStatusTable,
-  // [DatabaseTableName.comments]: commentsTable,
+  [DatabaseTableName.tenants]: tenantsTable,
+  [DatabaseTableName.clients]: clientsTable,
+  [DatabaseTableName.users]: usersTable,
 };

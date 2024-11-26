@@ -17,13 +17,18 @@ export class ClientService {
   async create(
     payload: CreateClientDomainDto,
   ): Promise<ClientResponseDomainDto> {
+    // Generating client ID and secret
     const clientId = IdGenerator.generateClientId({ prefix: payload.type });
     const clientSecret = IdGenerator.generateClientSecret();
 
+    // Creating client
     return this.clientRepository.createOne({
       ...payload,
       clientId,
-      clientSecret: payload.type === 'public' ? undefined : clientSecret,
+      clientSecret: payload?.type === 'public' ? '' : clientSecret,
+      allowedGrants: ['authorization_code', 'password'],
+      redirectUris:
+        payload?.redirectUris?.map((uri) => uri.replace(/ /g, '%20')) ?? [],
     });
   }
 

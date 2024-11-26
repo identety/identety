@@ -8,10 +8,13 @@ import { OidcModule } from './api/oidc/oidc.module';
 import { ClientModule } from './api/client/client.module';
 import { OrgModule } from './api/org/org.module';
 import { RoleModule } from './api/role/role.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     CommonModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    //
     OauthModule,
     OidcModule,
     ClientModule,

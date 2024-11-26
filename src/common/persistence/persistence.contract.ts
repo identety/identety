@@ -1,3 +1,5 @@
+import { DrizzleService } from '@/common/persistence/drizzle/drizzle.service';
+
 interface PaginationMeta {
   totalCount: number;
   currentPage: number;
@@ -78,4 +80,6 @@ export interface IPersistentDriver<DOMAIN_MODEL> {
   ): Promise<{
     rows: Array<DOMAIN_MODEL>;
   }>;
+
+  drizzleService?: DrizzleService;
 }
