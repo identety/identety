@@ -1,7 +1,6 @@
 import { timestamp } from 'drizzle-orm/pg-core';
 
-export const commonTimestampColumns = {
-  updatedAt: timestamp(),
-  createdAt: timestamp().defaultNow().notNull(),
-  deletedAt: timestamp(),
+export const timestamps = {
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
 };

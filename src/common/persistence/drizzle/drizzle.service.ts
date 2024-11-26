@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   drizzle,
   NodePgClient,
@@ -12,13 +13,15 @@ export class DrizzleService implements OnModuleInit {
     $client: NodePgClient;
   };
 
+  constructor(private readonly config: ConfigService) {}
+
   async onModuleInit() {
     console.log('DrizzleService.onModuleInit');
     this.drizzle = this.init();
   }
 
   init() {
-    return drizzle('postgresql://rayhan:rayhan123@localhost:5432/ostasks', {
+    return drizzle(this.config.get('DATABASE_URL'), {
       schema,
       logger: true,
     });
