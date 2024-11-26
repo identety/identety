@@ -1,5 +1,4 @@
-export * from './schemas/common.schema';
-export * from './schemas/tenant.schema';
+export * from './schemas/schemas';
 
 export enum DatabaseTableName {
   tenants = 'tenants',

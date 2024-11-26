@@ -1,17 +1,17 @@
 import {
   DatabaseTableName,
   drizzleSchemaTableMap,
-} from '@/shared/persistence/drizzle/schemas';
+} from '@/common/persistence/drizzle/schemas';
 import {
   AppPaginationResponseDto,
   IPagination,
   IPersistentDriver,
   IPersistentFilterPayload,
-} from '@/shared/persistence/persistence.contract';
+} from '@/common/persistence/persistence.contract';
 import {
   buildOrderByClause,
   buildWhereClause,
-} from '@/shared/persistence/utils/persistent-utils';
+} from '@/common/persistence/utils/persistent-utils';
 
 /**
  * BaseDatabaseService

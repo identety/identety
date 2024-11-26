@@ -1,7 +1,7 @@
 import {
   IPersistentFilter,
   IPersistentOrderBy,
-} from '@/shared/persistence/persistence.contract';
+} from '@/common/persistence/persistence.contract';
 
 export const buildWhereClause = <T>(
   filters: Array<

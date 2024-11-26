@@ -1,5 +1,5 @@
-import { DrizzleService } from '@/shared/persistence/drizzle/drizzle.service';
-import { IPersistentDriver } from '@/shared/persistence/persistence.contract';
+import { DrizzleService } from '@/common/persistence/drizzle/drizzle.service';
+import { IPersistentDriver } from '@/common/persistence/persistence.contract';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
