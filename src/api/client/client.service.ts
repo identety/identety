@@ -23,12 +23,24 @@ export class ClientService {
 
     // Creating client
     return this.clientRepository.createOne({
-      ...payload,
       clientId,
       clientSecret: payload?.type === 'public' ? '' : clientSecret,
-      allowedGrants: ['authorization_code', 'password'],
+      name: payload.name,
+      allowedGrants: payload.allowedGrants ?? [
+        'authorization_code',
+        'password',
+      ],
+      allowedScopes: payload.allowedScopes ?? ['openid', 'profile', 'email'],
       redirectUris:
         payload?.redirectUris?.map((uri) => uri.replace(/ /g, '%20')) ?? [],
+      requirePkce: payload.type == 'public',
+      isActive: true,
+      type: payload?.type ?? 'public',
+      settings: payload?.settings ?? {
+        accessTokenTTL: 60 * 60,
+        refreshTokenTTL: 60 * 60 * 24 * 7,
+        tokenEndpointAuthMethod: 'client_secret_basic', // TODO: Learn more about this
+      },
     });
   }
 
