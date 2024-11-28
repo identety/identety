@@ -127,42 +127,7 @@ export class UpdateClientDto {
   isActive?: boolean;
 }
 
-// Example controller usage
-// @Controller('clients')
-// @UseGuards(AdminAuthGuard)
-// export class ClientController {
-//   constructor(private readonly clientService: ClientService) {}
-//
-//   @Post()
-//   async createClient(
-//     @TenantId() tenantId: string | undefined,
-//     @Body() createClientDto: CreateClientDto,
-//   ): Promise<ClientResponseDto> {
-//     return this.clientService.create(createClientDto, tenantId);
-//   }
-//
-//   @Put(':id')
-//   async updateClient(
-//     @TenantId() tenantId: string | undefined,
-//     @Param('id') id: string,
-//     @Body() updateClientDto: UpdateClientDto,
-//   ): Promise<ClientResponseDto> {
-//     return this.clientService.update(id, updateClientDto, tenantId);
-//   }
-// }
-
-// Example validation pipe setup in main.ts
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//
-//   app.useGlobalPipes(
-//     new ValidationPipe({
-//       whitelist: true, // Strip unknown properties
-//       forbidNonWhitelisted: true, // Throw error for unknown properties
-//       transform: true, // Transform payloads to DTO instances
-//     }),
-//   );
-//
-//   await app.listen(3000);
-// }
-// bootstrap();
+export class ClientResponseDto extends CreateClientDto {
+  @ApiProperty({ description: 'Client ID' })
+  id: string;
+}

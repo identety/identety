@@ -44,9 +44,17 @@ export class ClientService {
     });
   }
 
-  // async findById(id: string): Promise<ClientResponseDomainDto | null> {
-  //   return this.clientRepository.findOne(id);
-  // }
+  /**
+   * Finds a client by its ID.
+   * @param id
+   */
+  async findById(id: string): Promise<ClientResponseDomainDto | null> {
+    const [client] = await this.clientRepository.findRows({
+      limit: 1,
+      filters: [{ key: 'id', value: id, operator: '=' }],
+    });
+    return client;
+  }
   //
   // async findByClientId(
   //   clientId: string,
