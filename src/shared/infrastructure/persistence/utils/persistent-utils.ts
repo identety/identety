@@ -1,7 +1,7 @@
 import {
   IPersistentFilter,
   IPersistentOrderBy,
-} from '@/common/persistence/persistence.contract';
+} from '@/shared/infrastructure/persistence/persistence.contract';
 
 export const buildWhereClause = <T>(
   filters: Array<
@@ -52,4 +52,27 @@ export const buildOrderByClause = <T>(
   });
 
   return `ORDER BY ${orderByConditions.join(', ')}`;
+};
+
+export const buildSetClause = <T>(data: Partial<T>): string => {
+  const setClause = Object.keys(data)
+    .map((key, index) => `${key} = $${index + 1}`)
+    .join(', ');
+  return setClause;
+};
+
+export const makeColumnsSnakeCase = (columns: string[]): string => {
+  function toSnakeCase(str: string): string {
+    return str
+      .replace(/([A-Z])/g, '_$1')
+      .replace(/^_/, '')
+      .toLowerCase();
+  }
+
+  return columns?.length
+    ? columns
+        .map((c) => `"${c.toString()}"`)
+        .map(toSnakeCase)
+        .join(', ')
+    : '*';
 };

@@ -1,5 +1,5 @@
-import { DrizzleService } from '@/common/persistence/drizzle/drizzle.service';
-import { IPersistentDriver } from '@/common/persistence/persistence.contract';
+import { DrizzleService } from '@/shared/infrastructure/persistence/drizzle/drizzle.service';
+import { IPersistentDriver } from '@/shared/infrastructure/persistence/persistence.contract';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -21,12 +21,24 @@ export class PersistentDriverService<T> implements IPersistentDriver<T> {
 
     // Escapes a single value safely
     function escapeValue(value: any): string {
+      console.log({
+        value,
+        typeofValue: typeof value,
+      });
+
       if (value === null) return 'NULL';
       if (typeof value === 'number') return value.toString();
       if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
       if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
       if (typeof value === 'object') {
-        return `ARRAY[${value.map((v) => escapeValue(v)).join(',')}]`;
+        const isArray =
+          Object.prototype.toString.call(value) == '[object Array]';
+
+        if (isArray) {
+          return `ARRAY[${value.map((v) => escapeValue(v)).join(',')}]`;
+        } else {
+          return `JSONB '${JSON.stringify(value)}'`;
+        }
       } // throw new Error(`Unsupported value type: ${typeof value}`);
       return value;
     }

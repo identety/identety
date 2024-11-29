@@ -1,4 +1,4 @@
-import { DrizzleService } from '@/common/persistence/drizzle/drizzle.service';
+import { DrizzleService } from '@/shared/infrastructure/persistence/drizzle/drizzle.service';
 
 interface PaginationMeta {
   totalCount: number;
@@ -58,7 +58,7 @@ export interface IPersistentOrderBy<T> {
   direction: 'asc' | 'desc';
 }
 
-export interface IPersistentFilterPayload<T> {
+export interface IPersistentPaginationFilterPayload<T> {
   filters: Array<
     | IPersistentFilter<T>
     | { or?: IPersistentFilter<T>[]; and?: IPersistentFilter<T>[] }
@@ -67,6 +67,12 @@ export interface IPersistentFilterPayload<T> {
   columns?: Array<keyof T>;
   limit?: number;
   offset?: number;
+}
+
+export interface IPersistentFilterPayload<T> {
+  filters: Array<IPersistentFilter<T>>;
+  orderBy?: Array<IPersistentOrderBy<T>>;
+  columns?: Array<keyof T>;
 }
 
 //------------------------------------

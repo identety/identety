@@ -1,17 +1,15 @@
 // src/modules/clients/dto/create-client.dto.ts
 import {
-  IsString,
-  IsEnum,
   IsArray,
+  IsEnum,
+  IsObject,
   IsOptional,
-  IsBoolean,
+  IsString,
   IsUrl,
   ValidateNested,
-  ArrayMinSize,
-  IsObject,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 
 export enum ClientType {
   PUBLIC = 'public',
@@ -100,34 +98,4 @@ export class CreateClientDto {
   settings?: ClientSettings;
 }
 
-// src/modules/clients/dto/update-client.dto.ts
-export class UpdateClientDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsUrl({}, { each: true })
-  redirectUris?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  allowedScopes?: string[];
-
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => ClientSettings)
-  settings?: ClientSettings;
-
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
-}
-
-export class ClientResponseDto extends CreateClientDto {
-  @ApiProperty({ description: 'Client ID' })
-  id: string;
-}
+export class UpdateClientDto extends OmitType(CreateClientDto, ['type']) {}

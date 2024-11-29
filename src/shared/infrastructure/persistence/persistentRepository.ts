@@ -1,17 +1,20 @@
 import {
   DatabaseTableName,
   drizzleSchemaTableMap,
-} from '@/common/persistence/drizzle/schemas';
+} from '@/shared/infrastructure/persistence/drizzle/schemas';
 import {
   AppPaginationResponseDto,
   IPagination,
   IPersistentDriver,
   IPersistentFilterPayload,
-} from '@/common/persistence/persistence.contract';
+  IPersistentPaginationFilterPayload,
+} from '@/shared/infrastructure/persistence/persistence.contract';
 import {
   buildOrderByClause,
+  buildSetClause,
   buildWhereClause,
-} from '@/common/persistence/utils/persistent-utils';
+  makeColumnsSnakeCase,
+} from '@/shared/infrastructure/persistence/utils/persistent-utils';
 
 /**
  * BaseDatabaseService
@@ -71,13 +74,11 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
    * Finds rows in the database based on the provided filter criteria.
    * @param payload
    */
-  async findRows(payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>) {
+  async findRows(
+    payload: IPersistentPaginationFilterPayload<DOMAIN_MODEL_TYPE>,
+  ) {
     // Default columns to '*' if none are provided
-    const columns = payload.columns?.length
-      ? payload.columns.map((c) => `"${c.toString()}"`).join(', ')
-      : '*';
-
-    console.log('columns', columns);
+    const columns = makeColumnsSnakeCase(payload.columns as any);
     const { whereClause, values } = buildWhereClause(payload.filters);
     const orderByClause = buildOrderByClause(payload.orderBy);
 
@@ -104,7 +105,7 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
    * @param payload
    */
   async findRowCount(
-    payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>,
+    payload: IPersistentPaginationFilterPayload<DOMAIN_MODEL_TYPE>,
   ): Promise<number> {
     // // if (payload.filters.length === 0) {
     // //   throw new Error('At least one filter must be provided.');
@@ -155,8 +156,6 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
       .join(', ');
     const values = Object.values(data) as any[];
 
-    console.log('values', values);
-
     // Build the SQL query
     const sql = `
       INSERT INTO ${this.tableName} (${columns})
@@ -185,29 +184,41 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
     return results as DOMAIN_MODEL_TYPE[];
   }
 
-  // async deleteOne(id: string): Promise<DOMAIN_MODEL_TYPE> {
-  //   // const result = await this.persistentDatabaseDriverService.drizzle
-  //   //   .delete(drizzleSchemaTableMap[this.tableName])
-  //   //   .where(eq(drizzleSchemaTableMap[this.tableName].id, id))
-  //   //   .returning();
-  //   // return result[0] as DOMAIN_MODEL_TYPE;
-  //
-  //   return [];
-  // }
+  async updateOne(
+    payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>,
+    data: Partial<DOMAIN_MODEL_TYPE>,
+  ): Promise<DOMAIN_MODEL_TYPE> {
+    const { whereClause, values } = buildWhereClause(payload.filters);
+    const setClause = buildSetClause(data);
+    const columns = makeColumnsSnakeCase(payload.columns as any);
 
-  // async updateOne(
-  //   id: string,
-  //   data: Partial<DOMAIN_MODEL_TYPE>,
-  // ): Promise<DOMAIN_MODEL_TYPE> {
-  //   // const result = await this.persistentDatabaseDriverService.drizzle
-  //   //   .update(drizzleSchemaTableMap[this.tableName])
-  //   //   .set(data)
-  //   //   .where(eq(drizzleSchemaTableMap[this.tableName].id, id))
-  //   //   .returning();
-  //   // return result[0] as DOMAIN_MODEL_TYPE;
-  //
-  //   return {};
-  // }
+    const sql = `
+       UPDATE ${this.tableName}
+       ${setClause ? `SET ${setClause}` : ''}
+       ${whereClause ? `WHERE ${whereClause}` : ''}
+       RETURNING ${columns};
+     `;
+
+    const result = await this.executeSQL(sql, values);
+    return result.rows[0] as DOMAIN_MODEL_TYPE;
+  }
+
+  /**
+   * Deletes rows in the database based on the provided filter criteria.
+   * @param payload
+   */
+  deleteRows(payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>) {
+    const { whereClause, values } = buildWhereClause(payload.filters);
+    const columns = makeColumnsSnakeCase(payload.columns as any);
+
+    const sql = `
+       DELETE FROM ${this.tableName}
+       ${whereClause ? `WHERE ${whereClause}` : ''}
+       RETURNING ${columns};
+     `;
+
+    return this.executeSQL(sql, values);
+  }
 
   //------------------------------------
   // Utils

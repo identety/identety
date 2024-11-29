@@ -2,7 +2,7 @@ import {
   clientsTable,
   tenantsTable,
   usersTable,
-} from '@/common/persistence/drizzle/schemas/schemas';
+} from '@/shared/infrastructure/persistence/drizzle/schemas/schemas';
 
 export * from './schemas/schemas';
 
