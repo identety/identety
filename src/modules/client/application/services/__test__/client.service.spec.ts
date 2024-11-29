@@ -1,15 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ClientService } from '../../../application/services/client.service';
+import { ClientService } from '@/modules/client/application/services/client.service';
+import { Test } from '@nestjs/testing';
+import { ClientRepository } from '@/modules/client/application/ports/client.repository';
+import { PersistenceModule } from '@/shared/infrastructure/persistence/persistence.module';
+import { ClientController } from '@/modules/client/interface/http/client.controller';
 
 describe('ClientService', () => {
   let service: ClientService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [ClientService],
+    const module = await Test.createTestingModule({
+      imports: [PersistenceModule],
+      providers: [ClientService, ClientRepository],
+      controllers: [ClientController],
     }).compile();
 
-    service = module.get<ClientService>(ClientService);
+    service = module.get(ClientService);
   });
 
   it('should be defined', () => {

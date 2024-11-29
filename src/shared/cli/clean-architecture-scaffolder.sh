@@ -9,15 +9,42 @@ MODULE_NAME=$1
 MODULE_NAME_CAPITAL="$(tr '[:lower:]' '[:upper:]' <<< ${MODULE_NAME:0:1})${MODULE_NAME:1}"
 BASE_DIR="src/modules/$MODULE_NAME"
 
-mkdir -p "$BASE_DIR"/{domain/models,application/{ports,services},interface/http/dtos,__test__}
+# Module tree structure
+# src
+# ├── modules
+# │   └── $MODULE_NAME
+# │       ├── domain
+# │       │   └── models
+# │       │       └── $MODULE_NAME.ts
+# │       ├── application
+# │       │   ├── ports
+# │       │   │   └── $MODULE_NAME.repository.ts
+# │       │   └── services
+# │       │       └── $MODULE_NAME.service.ts
+# │       ├── interface
+# │       │   ├── http
+# │       │   │   ├── dto
+# |       |   |       ├── $MODULE_NAME.dto.ts
+# |       |   |   |-- $MODULE_NAME.controller.ts
+
+# Create the necessary directories
+mkdir -p "$BASE_DIR"/domain/models
+mkdir -p "$BASE_DIR"/application/{ports,services}
+mkdir -p "$BASE_DIR"/application/services/__test__
+mkdir -p "$BASE_DIR"/interface/http/{dtos,__test__}
+
+
+#-------------------------------------------------------
+#   Creating file with contents
+#-------------------------------------------------------
 
 cat > "$BASE_DIR/domain/models/${MODULE_NAME}.ts" << EOF
 export interface $MODULE_NAME_CAPITAL {
-    id: string;
-    // Add your domain properties here
+  id: string;
+  // Add your domain properties here
 
-    createdAt: Date;
-    updatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 EOF
 
@@ -48,11 +75,11 @@ EOF
 
 cat > "$BASE_DIR/interface/http/dtos/${MODULE_NAME}.dto.ts" << EOF
 export class Create${MODULE_NAME_CAPITAL}Dto {
-    // Add your DTO properties here
+  // Add your DTO properties here
 }
 
 export class Update${MODULE_NAME_CAPITAL}Dto {
-    // Add your DTO properties here
+  // Add your DTO properties here
 }
 EOF
 
@@ -60,9 +87,9 @@ cat > "$BASE_DIR/interface/http/dtos/${MODULE_NAME}-response.swagger.ts" << EOF
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ${MODULE_NAME_CAPITAL}SwaggerResponseModel {
-    @ApiProperty()
-    id: string;
-    // Add your response properties here
+  @ApiProperty()
+  id: string;
+  // Add your response properties here
 }
 EOF
 
@@ -72,12 +99,12 @@ import { ${MODULE_NAME_CAPITAL}Service } from '../../application/services/${MODU
 
 @Controller('${MODULE_NAME}')
 export class ${MODULE_NAME_CAPITAL}Controller {
-    constructor(private readonly service: ${MODULE_NAME_CAPITAL}Service) {}
+  constructor(private readonly service: ${MODULE_NAME_CAPITAL}Service) {}
 
-    @Get(':id')
-    async findById(@Param('id') id: string): Promise<string> {
-        return this.service.findById(id);
-    }
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<string> {
+    return this.service.findById(id);
+  }
 }
 EOF
 
@@ -88,8 +115,8 @@ import { ${MODULE_NAME_CAPITAL}Service } from './application/services/${MODULE_N
 import { AuthRepository } from './application/ports/${MODULE_NAME}.repository';
 
 @Module({
-    controllers: [${MODULE_NAME_CAPITAL}Controller],
-    providers: [${MODULE_NAME_CAPITAL}Service, ${MODULE_NAME_CAPITAL}Repository],
+  controllers: [${MODULE_NAME_CAPITAL}Controller],
+  providers: [${MODULE_NAME_CAPITAL}Service, ${MODULE_NAME_CAPITAL}Repository],
 })
 export class ${MODULE_NAME_CAPITAL}Module {}
 EOF

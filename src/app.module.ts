@@ -8,12 +8,14 @@ import { ClientModule } from '@/modules/client/client.module';
 import { OrgModule } from '@/modules/org/org.module';
 import { RoleModule } from '@/modules/role/role.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from '@/modules/auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
     //
+    AuthModule,
     OauthModule,
     OidcModule,
     ClientModule,
