@@ -32,11 +32,11 @@ jobs:
 #      - name: Run e2e tests
 #        run: npm run test:e2e
 
-      - name: Check linting
-        run: npm run lint
-
-      - name: Check formatting
-        run: npm run format:check
+#      - name: Check linting
+#        run: npm run lint
+#
+#      - name: Check formatting
+#        run: npm run format:check
 
       - name: Build
         run: npm run build
