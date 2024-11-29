@@ -64,8 +64,8 @@ import { Injectable } from '@nestjs/common';
 import { ${MODULE_NAME_CAPITAL}Repository } from '../ports/${MODULE_NAME}.repository';
 
 @Injectable()
-export class AuthService {
-  constructor(private readonly repository: AuthRepository) {}
+export class ${MODULE_NAME_CAPITAL}Service {
+  constructor(private readonly repository: ${MODULE_NAME_CAPITAL}Repository) {}
 
   async findById(id: string): Promise<string> {
     return this.repository.findById(id);
@@ -112,7 +112,7 @@ cat > "$BASE_DIR/${MODULE_NAME}.module.ts" << EOF
 import { Module } from '@nestjs/common';
 import { ${MODULE_NAME_CAPITAL}Controller } from './interface/http/${MODULE_NAME}.controller';
 import { ${MODULE_NAME_CAPITAL}Service } from './application/services/${MODULE_NAME}.service';
-import { AuthRepository } from './application/ports/${MODULE_NAME}.repository';
+import { ${MODULE_NAME_CAPITAL}Repository } from './application/ports/${MODULE_NAME}.repository';
 
 @Module({
   controllers: [${MODULE_NAME_CAPITAL}Controller],
@@ -122,62 +122,51 @@ export class ${MODULE_NAME_CAPITAL}Module {}
 EOF
 
 cat > "$BASE_DIR/interface/http/__test__/${MODULE_NAME}.controller.spec.ts" << EOF
-import { Test } from '@nestjs/testing';
-import { ${MODULE_NAME_CAPITAL}Controller } from '../interface/http/${MODULE_NAME}.controller';
-import { ${MODULE_NAME_CAPITAL}Service } from '../application/services/${MODULE_NAME}.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { ${MODULE_NAME_CAPITAL}Controller } from '../${MODULE_NAME}.controller';
+import { ${MODULE_NAME_CAPITAL}Repository } from '../../../application/ports/${MODULE_NAME}.repository';
+import { ${MODULE_NAME_CAPITAL}Service } from '../../../application/services/${MODULE_NAME}.service';
 
 describe('${MODULE_NAME_CAPITAL}Controller', () => {
-    let controller: ${MODULE_NAME_CAPITAL}Controller;
-    let service: ${MODULE_NAME_CAPITAL}Service;
+  let controller: ${MODULE_NAME_CAPITAL}Controller;
 
-    beforeEach(async () => {
-        const module = await Test.createTestingModule({
-            controllers: [${MODULE_NAME_CAPITAL}Controller],
-            providers: [
-                {
-                    provide: ${MODULE_NAME_CAPITAL}Service,
-                    useValue: {}
-                }
-            ],
-        }).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [${MODULE_NAME_CAPITAL}Controller],
+      providers: [${MODULE_NAME_CAPITAL}Service, ${MODULE_NAME_CAPITAL}Repository],
+    }).compile();
 
-        controller = module.get(${MODULE_NAME_CAPITAL}Controller);
-        service = module.get(${MODULE_NAME_CAPITAL}Service);
-    });
+    controller = module.get<${MODULE_NAME_CAPITAL}Controller>(${MODULE_NAME_CAPITAL}Controller);
+  });
 
-    it('should be defined', () => {
-        expect(controller).toBeDefined();
-    });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 });
 EOF
 
 cat > "$BASE_DIR/application/services/__test__/${MODULE_NAME}.service.spec.ts" << EOF
 import { Test } from '@nestjs/testing';
-import { ${MODULE_NAME_CAPITAL}Service } from '../application/services/${MODULE_NAME}.service';
-import { ${MODULE_NAME_CAPITAL}Repository } from '../application/ports/${MODULE_NAME}.repository';
+import { ${MODULE_NAME_CAPITAL}Service } from '../../services/${MODULE_NAME}.service';
+import { ${MODULE_NAME_CAPITAL}Repository } from '../../ports/${MODULE_NAME}.repository';
 
 describe('${MODULE_NAME_CAPITAL}Service', () => {
-    let service: ${MODULE_NAME_CAPITAL}Service;
-    let repository: ${MODULE_NAME_CAPITAL}Repository;
+  let service: ${MODULE_NAME_CAPITAL}Service;
+  let repository: ${MODULE_NAME_CAPITAL}Repository;
 
-    beforeEach(async () => {
-        const module = await Test.createTestingModule({
-            providers: [
-                ${MODULE_NAME_CAPITAL}Service,
-                {
-                    provide: '${MODULE_NAME_CAPITAL}Repository',
-                    useValue: {}
-                }
-            ],
-        }).compile();
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [${MODULE_NAME_CAPITAL}Service, ${MODULE_NAME_CAPITAL}Repository],
+    }).compile();
 
-        service = module.get(${MODULE_NAME_CAPITAL}Service);
-        repository = module.get('${MODULE_NAME_CAPITAL}Repository');
-    });
+    service = module.get(${MODULE_NAME_CAPITAL}Service);
+    repository = module.get(${MODULE_NAME_CAPITAL}Repository);
+  });
 
-    it('should be defined', () => {
-        expect(service).toBeDefined();
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+    expect(repository).toBeDefined();
+  });
 });
 EOF
 
