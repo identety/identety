@@ -5,15 +5,20 @@ import {
   ClientSettings,
   ClientResponseDomainDto,
 } from '../client';
+import * as crypto from 'node:crypto';
+import { IdGenerator } from '@/shared/utils/id-generator';
 
 describe('domain:Client', () => {
   let validClientData: Client;
+  const id = crypto.randomUUID();
+  const clientId = IdGenerator.generateClientId({ prefix: 'test' });
+  const clientSecret = IdGenerator.generateClientSecret({ prefix: 'test' });
 
   beforeEach(() => {
     validClientData = {
-      id: 'test-id',
-      clientId: 'test-client-id',
-      clientSecret: 'secret',
+      id,
+      clientId,
+      clientSecret,
       name: 'Test Client',
       type: 'public',
       redirectUris: ['https://example.com/callback'],
@@ -36,8 +41,8 @@ describe('domain:Client', () => {
   it('should create client with all properties', () => {
     const client = validClientData;
     expect(client).toBeDefined();
-    expect(client.id).toBe('test-id');
-    expect(client.clientId).toBe('test-client-id');
+    expect(client.id).toBe(id);
+    expect(client.clientId).toBe(clientId);
     expect(client.type).toBe('public');
   });
 
