@@ -1,4 +1,3 @@
-// src/utils/id-generator.ts
 import * as crypto from 'crypto';
 
 interface GenerateOptions {
