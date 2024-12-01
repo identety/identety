@@ -306,30 +306,30 @@ describe('ClientService', () => {
     });
   });
 
-  // describe('findById', () => {
-  //   it('should return client when found', async () => {
-  //     repository.findRows.mockResolvedValue([mockPublicClient]);
-  //
-  //     const result = await service.findById('test-id');
-  //
-  //     // const calledWith = repository.findRows.mock.calls[0][0];
-  //     // console.log(calledWith);
-  //
-  //     expect(repository.findRows).toHaveBeenCalledWith({
-  //       limit: 1,
-  //       filters: [{ key: 'id', value: 'test-id', operator: '=' }],
-  //     });
-  //     expect(result).toEqual(mockPublicClient);
-  //   });
-  //
-  //   it('should throw NotFoundException when client not found', async () => {
-  //     repository.findRows.mockResolvedValue([]);
-  //
-  //     await expect(service.findById('non-existent-id')).rejects.toThrow(
-  //       NotFoundException,
-  //     );
-  //   });
-  // });
+  describe('findById', () => {
+    it('should return client when found', async () => {
+      repository.findRows.mockResolvedValue([mockPrivateClient]);
+
+      const result = await service.findById('test-id');
+
+      const calledWith = repository.findRows.mock.calls[0][0];
+      console.log({ calledWith, result });
+
+      expect(repository.findRows).toHaveBeenCalledWith({
+        limit: 1,
+        filters: [{ key: 'id', value: 'test-id', operator: '=' }],
+      });
+      expect(result).toEqual(mockPrivateClient);
+    });
+
+    it('should throw NotFoundException when client not found', async () => {
+      repository.findRows.mockResolvedValue([]);
+
+      await expect(service.findById('non-existent-id')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
 
   // describe('updateClient', () => {
   //   beforeEach(() => {
