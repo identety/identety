@@ -174,7 +174,8 @@ describe('ClientService', () => {
 
     // Creates wth default settings
     it('should create public client with default settings', async () => {
-      const defaultPublicClient = service.getClientDefaultConfig('public');
+      const defaultPublicClientConfig =
+        service.getClientDefaultConfig('public');
 
       repository.createOne.mockResolvedValue(mockPublicClient);
 
@@ -185,18 +186,75 @@ describe('ClientService', () => {
 
       await service.createClient(mockPayload);
 
-      const calledWith = repository.createOne.mock.calls[0][0];
-      console.log(calledWith);
+      // const calledWith = repository.createOne.mock.calls[0][0];
+      // console.log({ calledWith, defaultPublicClientConfig });
 
-      // expect(repository.createOne).toHaveBeenCalledWith(
-      //   expect.objectContaining({
-      //     ...defaultPublicClient,
-      //     type: mockPayload.type,
-      //     name: mockPayload.name,
-      //     clientId: expect.stringContaining('public_'),
-      //     clientSecret: expect.stringContaining(`${mockPayload.type}_secret_`), // Should have a secret
-      //   }),
-      // );
+      expect(repository.createOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: mockPayload.type,
+          name: mockPayload.name,
+          clientId: expect.stringContaining('public_'),
+          clientSecret: '', // Should have a secret
+          allowedGrants: defaultPublicClientConfig.allowedGrants,
+          allowedScopes: defaultPublicClientConfig.allowedScopes,
+          settings: defaultPublicClientConfig.settings,
+        }),
+      );
+    });
+    it('should create private client with default settings', async () => {
+      const defaultPrivateClientConfig =
+        service.getClientDefaultConfig('private');
+
+      repository.createOne.mockResolvedValue(mockPrivateClient);
+
+      const mockPayload: CreateClientDomainDto = {
+        type: 'private',
+        name: 'Test private Client',
+      };
+
+      await service.createClient(mockPayload);
+
+      // const calledWith = repository.createOne.mock.calls[0][0];
+      // console.log({ calledWith, defaultPrivateClientConfig });
+
+      expect(repository.createOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: mockPayload.type,
+          name: mockPayload.name,
+          clientId: expect.stringContaining('private_'),
+          clientSecret: expect.stringContaining(`private_secret_`), // Should have a secret
+          allowedGrants: defaultPrivateClientConfig.allowedGrants,
+          allowedScopes: defaultPrivateClientConfig.allowedScopes,
+          settings: defaultPrivateClientConfig.settings,
+        }),
+      );
+    });
+    it('should create m2m client with default settings', async () => {
+      const defaultM2mClientConfig = service.getClientDefaultConfig('m2m');
+
+      repository.createOne.mockResolvedValue(mockPrivateClient);
+
+      const mockPayload: CreateClientDomainDto = {
+        type: 'm2m',
+        name: 'Test m2m Client',
+      };
+
+      await service.createClient(mockPayload);
+
+      // const calledWith = repository.createOne.mock.calls[0][0];
+      // console.log({ calledWith, defaultPrivateClientConfig });
+
+      expect(repository.createOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: mockPayload.type,
+          name: mockPayload.name,
+          clientId: expect.stringContaining('m2m_'),
+          clientSecret: expect.stringContaining(`m2m_secret_`), // Should have a secret
+          allowedGrants: defaultM2mClientConfig.allowedGrants,
+          allowedScopes: defaultM2mClientConfig.allowedScopes,
+          settings: defaultM2mClientConfig.settings,
+        }),
+      );
     });
 
     // Error handling
