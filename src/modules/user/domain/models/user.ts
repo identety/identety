@@ -63,4 +63,5 @@ export interface CreateUserDto extends Partial<Omit<User, OmittedUserFields>> {
   password?: string;
 }
 
-export interface UpdateUserDto extends Partial<CreateUserDto> {}
+export interface UpdateUserDto
+  extends Partial<Omit<CreateUserDto, 'password'>> {}
