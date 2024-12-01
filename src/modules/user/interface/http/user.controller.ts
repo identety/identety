@@ -6,7 +6,7 @@ export class UserController {
   constructor(private readonly service: UserService) {}
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<string> {
+  async findById(@Param('id') id: string) {
     return this.service.findById(id);
   }
 }

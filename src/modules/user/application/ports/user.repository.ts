@@ -5,7 +5,7 @@ import { DatabaseTableName } from '@/shared/infrastructure/persistence/drizzle/s
 
 export class UserRepository extends PersistentRepository<User> {
   constructor(
-    private readonly persistentDriverService: PersistentDriverService<User>,
+    public readonly persistentDriverService: PersistentDriverService<User>,
   ) {
     super(DatabaseTableName.users, persistentDriverService);
   }
