@@ -61,6 +61,25 @@ describe('PasswordUtil', () => {
         PasswordUtil.verifyPassword('password', 'invalid-hash-format');
       }).toThrow();
     });
+
+    it('should throw error if hash does not contain separator', () => {
+      expect(() => {
+        PasswordUtil.verifyPassword('password', 'invalidhashformat');
+      }).toThrow('Invalid hash format: missing separator');
+    });
+
+    it('should throw error if salt length is incorrect', () => {
+      expect(() => {
+        PasswordUtil.verifyPassword('password', 'shortsalt:hash');
+      }).toThrow('Invalid hash format: incorrect salt length');
+    });
+
+    it('should throw error if hash length is incorrect', () => {
+      const salt = 'a'.repeat(32); // Correct salt length
+      expect(() => {
+        PasswordUtil.verifyPassword('password', `${salt}:shorthash`);
+      }).toThrow('Invalid hash format: incorrect hash length');
+    });
   });
 
   describe('edge cases', () => {

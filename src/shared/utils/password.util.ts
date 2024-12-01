@@ -26,8 +26,23 @@ export class PasswordUtil {
   }
 
   static verifyPassword(password: string, storedHash: string): boolean {
+    // Check if the stored hash contains the separator
+    if (!storedHash.includes(':')) {
+      throw new Error('Invalid hash format: missing separator');
+    }
+
     // Split stored string to get salt and hash
     const [salt, hash] = storedHash.split(':');
+
+    // Check lengths
+    if (salt.length !== 32) {
+      // 16 bytes in hex = 32 chars
+      throw new Error('Invalid hash format: incorrect salt length');
+    }
+    if (hash.length !== 128) {
+      // 64 bytes in hex = 128 chars
+      throw new Error('Invalid hash format: incorrect hash length');
+    }
 
     // Generate hash of input password using stored salt
     const inputHash = crypto
