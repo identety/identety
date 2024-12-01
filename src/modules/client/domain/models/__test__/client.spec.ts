@@ -6,13 +6,13 @@ import {
   ClientResponseDomainDto,
 } from '../client';
 import * as crypto from 'node:crypto';
-import { IdGenerator } from '@/shared/utils/id-generator';
+import { IdGeneratorUtil } from '@/shared/utils/id-generator.util';
 
 describe('domain:Client', () => {
   let validClientData: Client;
   const id = crypto.randomUUID();
-  const clientId = IdGenerator.generateClientId({ prefix: 'test' });
-  const clientSecret = IdGenerator.generateClientSecret({ prefix: 'test' });
+  const clientId = IdGeneratorUtil.generateClientId({ prefix: 'test' });
+  const clientSecret = IdGeneratorUtil.generateClientSecret({ prefix: 'test' });
 
   beforeEach(() => {
     validClientData = {

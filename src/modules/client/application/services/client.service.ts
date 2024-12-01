@@ -13,7 +13,7 @@ import {
   GrantType,
   UpdateClientDomainDto,
 } from '../../domain/models/client';
-import { IdGenerator } from '@/shared/utils/id-generator';
+import { IdGeneratorUtil } from '@/shared/utils/id-generator.util';
 
 @Injectable()
 export class ClientService {
@@ -109,8 +109,8 @@ export class ClientService {
     payload: CreateClientDomainDto,
   ): Promise<ClientResponseDomainDto> {
     // Generating client ID and secret
-    const clientId = IdGenerator.generateClientId({ prefix: payload.type });
-    const clientSecret = IdGenerator.generateClientSecret({
+    const clientId = IdGeneratorUtil.generateClientId({ prefix: payload.type });
+    const clientSecret = IdGeneratorUtil.generateClientSecret({
       prefix: `${payload.type}_secret`,
     });
 

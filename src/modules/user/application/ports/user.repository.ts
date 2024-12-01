@@ -1,7 +1,12 @@
-export class UserRepository {
-  constructor() {}
+import { PersistentRepository } from '@/shared/infrastructure/persistence/persistentRepository';
+import { User } from '@/modules/user/domain/models/user';
+import { PersistentDriverService } from '@/shared/infrastructure/persistence/persistent-driver.service';
+import { DatabaseTableName } from '@/shared/infrastructure/persistence/drizzle/schemas';
 
-  findById(id: string): Promise<string> {
-    return Promise.resolve('auth:' + id);
+export class UserRepository extends PersistentRepository<User> {
+  constructor(
+    private readonly persistentDriverService: PersistentDriverService<User>,
+  ) {
+    super(DatabaseTableName.users, persistentDriverService);
   }
 }
