@@ -116,7 +116,9 @@ export class ClientService {
 
     // check for allowed scopes
     const allowedScopes = this.getAllowedScopesForClientType(payload.type);
-    if (payload.allowedScopes.some((scope) => !allowedScopes.includes(scope))) {
+    if (
+      payload.allowedScopes?.some((scope) => !allowedScopes.includes(scope))
+    ) {
       throw new BadRequestException(
         `Invalid scope. Allowed scopes are: ${allowedScopes.join(', ')}`,
       );
@@ -124,7 +126,9 @@ export class ClientService {
 
     // check for allowed grants
     const allowedGrants = this.getAllowedGrandsForClientType(payload.type);
-    if (payload.allowedGrants.some((grant) => !allowedGrants.includes(grant))) {
+    if (
+      payload.allowedGrants?.some((grant) => !allowedGrants.includes(grant))
+    ) {
       throw new BadRequestException(
         `Invalid grant. Allowed grants are: ${allowedGrants.join(', ')}`,
       );
@@ -139,7 +143,32 @@ export class ClientService {
     });
   }
 
-  updateClient(id: string, payload: UpdateClientDomainDto): Promise<Client> {
+  async updateClient(
+    id: string,
+    payload: UpdateClientDomainDto,
+  ): Promise<Client> {
+    const client = await this.findById(id);
+
+    // check for allowed scopes
+    const allowedScopes = this.getAllowedScopesForClientType(client.type);
+    if (
+      payload.allowedScopes?.some((scope) => !allowedScopes.includes(scope))
+    ) {
+      throw new BadRequestException(
+        `Invalid scope. Allowed scopes are: ${allowedScopes.join(', ')}`,
+      );
+    }
+
+    // check for allowed grants
+    const allowedGrants = this.getAllowedGrandsForClientType(client.type);
+    if (
+      payload.allowedGrants?.some((grant) => !allowedGrants.includes(grant))
+    ) {
+      throw new BadRequestException(
+        `Invalid grant. Allowed grants are: ${allowedGrants.join(', ')}`,
+      );
+    }
+
     return this.clientRepository.updateOne(
       { filters: [{ key: 'id', value: id, operator: '=' }] },
       payload,

@@ -46,7 +46,9 @@ export interface CreateClientDomainDto {
   settings?: Partial<ClientSettings>;
 }
 
-export type UpdateClientDomainDto = Omit<CreateClientDomainDto, 'type'>;
+export type UpdateClientDomainDto = Partial<
+  Omit<CreateClientDomainDto, 'type'>
+>;
 
 // Response Types
 export interface ClientResponseDomainDto {
