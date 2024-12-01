@@ -22,6 +22,7 @@ export type GrantType =
   | 'authorization_code'
   | 'client_credentials'
   | 'refresh_token'
+  | 'token'
   | 'password';
 
 // Settings Interface

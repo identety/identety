@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { ClientService } from '../client.service';
 import { ClientRepository } from '../../ports/client.repository';
 import { Client, CreateClientDomainDto } from '../../../domain/models/client';
+import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'node:crypto';
 
 describe('ClientService', () => {
@@ -50,10 +51,9 @@ describe('ClientService', () => {
   });
 
   describe('createClient', () => {
-    it('should create public client without client secret', async () => {
+    it('should create public client successfully', async () => {
       repository.createOne.mockResolvedValue(mockPublicClient);
 
-      // Act
       const mockPayload: CreateClientDomainDto = {
         type: 'public',
         name: 'Test Public Client',
@@ -63,7 +63,6 @@ describe('ClientService', () => {
 
       await service.createClient(mockPayload);
 
-      // Assert the repository received the correct payload
       expect(repository.createOne).toHaveBeenCalledWith(
         expect.objectContaining({
           clientId: expect.any(String),
@@ -74,6 +73,93 @@ describe('ClientService', () => {
           allowedScopes: mockPayload.allowedScopes,
         }),
       );
+    });
+
+    it('should throw BadRequestException for invalid scopes', async () => {
+      const mockPayload: CreateClientDomainDto = {
+        type: 'public',
+        name: 'Test Public Client',
+        allowedGrants: ['authorization_code'],
+        allowedScopes: ['invalid_scope'], // Invalid scope
+      };
+
+      await expect(service.createClient(mockPayload)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should throw BadRequestException for invalid grants', async () => {
+      const mockPayload: CreateClientDomainDto = {
+        type: 'public',
+        name: 'Test Public Client',
+        allowedGrants: ['invalid_grant'] as any, // Invalid grant
+        allowedScopes: ['openid'],
+      };
+
+      await expect(service.createClient(mockPayload)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should create m2m client with correct scopes and grants', async () => {
+      const m2mClient: Client = {
+        ...mockPublicClient,
+        type: 'm2m',
+        allowedGrants: ['client_credentials'],
+        allowedScopes: ['offline_access', 'identety:god'],
+      };
+      repository.createOne.mockResolvedValue(m2mClient);
+
+      const mockPayload: CreateClientDomainDto = {
+        type: 'm2m',
+        name: 'Test M2M Client',
+        allowedGrants: ['client_credentials'],
+        allowedScopes: ['offline_access', 'identety:god'],
+      };
+
+      await service.createClient(mockPayload);
+
+      expect(repository.createOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'm2m',
+          allowedGrants: ['client_credentials'],
+          allowedScopes: expect.arrayContaining(['identety:god']),
+          clientSecret: expect.stringContaining(`${mockPayload.type}_secret_`), // Should have a secret
+        }),
+      );
+    });
+  });
+
+  describe('getAllowedGrandsForClientType', () => {
+    it('should return correct grants for public client', () => {
+      const grants = service.getAllowedGrandsForClientType('public');
+      expect(grants).toEqual([
+        'authorization_code',
+        'refresh_token',
+        'password',
+        'token',
+      ]);
+    });
+
+    it('should return correct grants for m2m client', () => {
+      const grants = service.getAllowedGrandsForClientType('m2m');
+      expect(grants).toEqual(['client_credentials']);
+    });
+  });
+
+  describe('getAllowedScopesForClientType', () => {
+    it('should return correct scopes for public client', () => {
+      const scopes = service.getAllowedScopesForClientType('public');
+      expect(scopes).toEqual(['openid', 'profile', 'email', 'offline_access']);
+    });
+
+    it('should return correct scopes for m2m client', () => {
+      const scopes = service.getAllowedScopesForClientType('m2m');
+      expect(scopes).toEqual([
+        'offline_access',
+        'client_credentials',
+        'identety:god',
+      ]);
     });
   });
 });
