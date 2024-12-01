@@ -59,6 +59,8 @@ type OmittedUserFields =
   | 'emailVerified'
   | 'isActive';
 
-export interface CreateUserDto extends Partial<Omit<User, OmittedUserFields>> {}
+export interface CreateUserDto extends Partial<Omit<User, OmittedUserFields>> {
+  password?: string;
+}
 
 export interface UpdateUserDto extends Partial<CreateUserDto> {}
