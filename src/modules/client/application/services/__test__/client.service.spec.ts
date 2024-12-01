@@ -312,8 +312,8 @@ describe('ClientService', () => {
 
       const result = await service.findById('test-id');
 
-      const calledWith = repository.findRows.mock.calls[0][0];
-      console.log({ calledWith, result });
+      // const calledWith = repository.findRows.mock.calls[0][0];
+      // console.log({ calledWith, result });
 
       expect(repository.findRows).toHaveBeenCalledWith({
         limit: 1,
@@ -331,165 +331,120 @@ describe('ClientService', () => {
     });
   });
 
-  // describe('updateClient', () => {
-  //   beforeEach(() => {
-  //     // Mock findById default response
-  //     repository.findRows.mockResolvedValue([mockPublicClient]);
-  //   });
-  //
-  //   it('should update client with partial data', async () => {
-  //     const updatePayload = {
-  //       name: 'Updated Name',
-  //     };
-  //
-  //     const updatedClient = {
-  //       ...mockPublicClient,
-  //       ...updatePayload,
-  //     };
-  //
-  //     repository.updateOne.mockResolvedValue(updatedClient);
-  //
-  //     const result = await service.updateClient('test-id', updatePayload);
-  //
-  //     expect(repository.updateOne).toHaveBeenCalledWith(
-  //       { filters: [{ key: 'id', value: 'test-id', operator: '=' }] },
-  //       updatePayload,
-  //     );
-  //     expect(result.name).toBe('Updated Name');
-  //   });
-  //
-  //   it('should update client with valid scopes and grants', async () => {
-  //     const updatePayload: UpdateClientDomainDto = {
-  //       allowedScopes: ['openid', 'profile'],
-  //       allowedGrants: ['authorization_code', 'refresh_token', 'password'],
-  //     };
-  //
-  //     const updatedClient: Client = {
-  //       ...mockPublicClient,
-  //       ...updatePayload,
-  //     };
-  //
-  //     repository.updateOne.mockResolvedValue(updatedClient);
-  //
-  //     const result = await service.updateClient('test-id', updatePayload);
-  //
-  //     expect(result.allowedScopes).toEqual(['openid', 'profile']);
-  //     expect(result.allowedGrants).toEqual([
-  //       'authorization_code',
-  //       'refresh_token',
-  //       'password',
-  //     ]);
-  //   });
-  //
-  //   it('should throw BadRequestException for invalid scopes', async () => {
-  //     const updatePayload = {
-  //       allowedScopes: ['invalid_scope'],
-  //     };
-  //
-  //     await expect(
-  //       service.updateClient('test-id', updatePayload),
-  //     ).rejects.toThrow(BadRequestException);
-  //
-  //     expect(repository.updateOne).not.toHaveBeenCalled();
-  //   });
-  //
-  //   it('should throw BadRequestException for invalid grants', async () => {
-  //     const updatePayload = {
-  //       allowedGrants: ['invalid_grant'],
-  //     };
-  //
-  //     await expect(
-  //       service.updateClient('test-id', updatePayload),
-  //     ).rejects.toThrow(BadRequestException);
-  //
-  //     expect(repository.updateOne).not.toHaveBeenCalled();
-  //   });
-  //
-  //   it('should throw NotFoundException when client not found', async () => {
-  //     repository.findRows.mockResolvedValue([]); // Client not found
-  //
-  //     const updatePayload = {
-  //       name: 'Updated Name',
-  //     };
-  //
-  //     await expect(
-  //       service.updateClient('non-existent-id', updatePayload),
-  //     ).rejects.toThrow(NotFoundException);
-  //
-  //     expect(repository.updateOne).not.toHaveBeenCalled();
-  //   });
-  //
-  //   it('should allow update without changing scopes or grants', async () => {
-  //     const updatePayload = {
-  //       name: 'Updated Name Only',
-  //     };
-  //
-  //     const updatedClient = {
-  //       ...mockPublicClient,
-  //       name: 'Updated Name Only',
-  //     };
-  //
-  //     repository.updateOne.mockResolvedValue(updatedClient);
-  //
-  //     const result = await service.updateClient('test-id', updatePayload);
-  //
-  //     expect(repository.updateOne).toHaveBeenCalled();
-  //     expect(result.name).toBe('Updated Name Only');
-  //     expect(result.allowedScopes).toEqual(mockPublicClient.allowedScopes);
-  //     expect(result.allowedGrants).toEqual(mockPublicClient.allowedGrants);
-  //   });
-  //
-  //   it('should respect client type specific validations', async () => {
-  //     // Mock M2M client
-  //     const m2mClient = {
-  //       ...mockPublicClient,
-  //       type: 'm2m',
-  //       allowedGrants: ['client_credentials'],
-  //       allowedScopes: ['offline_access', 'identety:god'],
-  //     };
-  //     repository.findRows.mockResolvedValue([m2mClient]);
-  //
-  //     // Try updating with invalid m2m scopes
-  //     const invalidPayload = {
-  //       allowedScopes: ['openid'], // not allowed for m2m
-  //     };
-  //
-  //     await expect(
-  //       service.updateClient('test-id', invalidPayload),
-  //     ).rejects.toThrow(BadRequestException);
-  //   });
-  // });
-  //
-  // describe('getAllowedGrandsForClientType', () => {
-  //   it('should return correct grants for public client', () => {
-  //     const grants = service.getAllowedGrandsForClientType('public');
-  //     expect(grants).toEqual([
-  //       'authorization_code',
-  //       'refresh_token',
-  //       'password',
-  //       'token',
-  //     ]);
-  //   });
-  //
-  //   it('should return correct grants for m2m client', () => {
-  //     const grants = service.getAllowedGrandsForClientType('m2m');
-  //     expect(grants).toEqual(['client_credentials']);
-  //   });
-  // });
-  //
-  // describe('getAllowedScopesForClientType', () => {
-  //   it('should return correct scopes for public client', () => {
-  //     const scopes = service.getAllowedScopesForClientType('public');
-  //     expect(scopes).toEqual(['openid', 'profile', 'email', 'offline_access']);
-  //   });
-  //
-  //   it('should return correct scopes for m2m client', () => {
-  //     const scopes = service.getAllowedScopesForClientType('m2m');
-  //     expect(scopes).toEqual([
-  //       'offline_access',
-  //       'client_credentials',
-  //       'identety:god',
-  //     ]);
-  //   });
-  // });
+  describe('updateClient', () => {
+    describe('scope validation', () => {
+      it('should allow update with valid scopes', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+
+        const payload: UpdateClientDomainDto = {
+          allowedScopes: ['openid', 'profile'],
+        };
+
+        await service.updateClient('test-id', payload);
+        expect(repository.findRows).toHaveBeenCalled();
+      });
+
+      it('should throw BadRequestException for invalid scopes', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+
+        const payload = {
+          allowedScopes: ['invalid_scope', 'openid'], // One invalid scope
+        };
+
+        await expect(service.updateClient('test-id', payload)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+
+      it('should allow update without scopes', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+        const payload = {
+          name: 'Updated Name', // No scopes in payload
+        };
+
+        await service.updateClient('test-id', payload);
+
+        expect(repository.updateOne).toHaveBeenCalled();
+      });
+    });
+
+    describe('grant validation', () => {
+      beforeEach(() => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+      });
+
+      it('should allow update with valid grants', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+        const payload: UpdateClientDomainDto = {
+          allowedGrants: ['authorization_code', 'refresh_token'],
+        };
+
+        await service.updateClient('test-id', payload);
+
+        // const calledWith = repository.updateOne.mock.calls[0][0];
+        // console.log({ calledWith });
+
+        expect(repository.updateOne).toHaveBeenCalled();
+      });
+
+      it('should throw BadRequestException for not allowed grants', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+        const payload: UpdateClientDomainDto = {
+          allowedGrants: ['client_credentials'],
+        };
+
+        await expect(service.updateClient('test-id', payload)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+
+      it('should allow update without grants', async () => {
+        repository.findRows = jest.fn().mockResolvedValue([mockPublicClient]);
+        const payload = {
+          name: 'Updated Name', // No grants in payload
+        };
+
+        await service.updateClient('test-id', payload);
+
+        expect(repository.updateOne).toHaveBeenCalled();
+      });
+    });
+
+    describe('client type specific validation', () => {
+      it('should validate against m2m client allowed scopes', async () => {
+        // Mock m2m client
+        repository.findRows.mockResolvedValue([mockM2MClient]);
+
+        const payload = {
+          allowedScopes: ['openid'], // Not allowed for m2m
+        };
+
+        await expect(service.updateClient('test-id', payload)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+
+      it('should validate against m2m client allowed grants', async () => {
+        repository.findRows.mockResolvedValue([mockM2MClient]);
+
+        const payload: UpdateClientDomainDto = {
+          allowedGrants: ['authorization_code'],
+        };
+
+        await expect(service.updateClient('test-id', payload)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+    });
+
+    describe('error handling', () => {
+      it('should throw NotFoundException when client not found', async () => {
+        repository.findRows.mockResolvedValue([]); // Client not found
+
+        await expect(service.updateClient('test-id', {})).rejects.toThrow(
+          NotFoundException,
+        );
+      });
+    });
+  });
 });
