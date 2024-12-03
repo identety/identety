@@ -57,7 +57,7 @@ export class ClientResponseSwagger {
   }
   static GetClientById() {
     return applyDecorators(
-      ApiOperation({ summary: 'Create new client' }),
+      ApiOperation({ summary: 'Get client details by id' }),
       ApiResponse({
         isArray: false,
         status: 200,

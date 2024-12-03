@@ -193,15 +193,17 @@ export class ClientService {
    * Deletes a client by its ID.
    * @param id
    */
-  async deleteClientById(id: string) {
+  async deleteClientById(id: string): Promise<ClientResponseDomainDto> {
     const [client] = await this.clientRepository.findRows({
       limit: 1,
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
 
     if (!client) throw new NotFoundException();
-    return this.clientRepository.deleteRows({
+    await this.clientRepository.deleteRows({
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
+
+    return client;
   }
 }

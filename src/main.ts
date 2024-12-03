@@ -12,10 +12,7 @@ async function bootstrap() {
     .setDescription('Identity Provider API')
     .setVersion('1.0')
     // Add security definition for API key
-    .addApiKey(
-      { type: 'apiKey', name: 'x-api-key', in: 'header' },
-      'x-modules-key',
-    )
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);

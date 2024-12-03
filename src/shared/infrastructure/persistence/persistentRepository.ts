@@ -15,6 +15,7 @@ import {
   buildWhereClause,
   makeColumnsSnakeCase,
 } from '@/shared/infrastructure/persistence/utils/persistent-utils';
+import { BadRequestException } from '@nestjs/common';
 
 /**
  * BaseDatabaseService
@@ -37,12 +38,6 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
     const _page = payload.page || 1;
     const _offset = (_page - 1) * _limit;
 
-    // Raw SQL for the total count
-    const countQuery = `
-      SELECT COUNT(*) as count 
-      FROM ${this.tableName};
-    `;
-
     // Execute the main query
     const nodes = await this.findRows({
       limit: _limit,
@@ -53,19 +48,18 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
     });
 
     // Execute the count query
-    const totalCountResult = await this.persistentDriver.executeSQL(
-      countQuery,
-      [],
-    );
-    const totalCount = 0;
+    const totalCountResult =
+      (await this.findRowCount({
+        filters: payload?.filters || [],
+      })) || 0;
 
     return {
       nodes: nodes as DOMAIN_MODEL_TYPE[],
       meta: {
-        totalCount,
-        currentPage: _page,
-        hasNextPage: _page * _limit < totalCount,
-        totalPages: Math.ceil(totalCount / _limit),
+        totalCount: +totalCountResult,
+        currentPage: +_page,
+        hasNextPage: _page * _limit < totalCountResult,
+        totalPages: +Math.ceil(totalCountResult / _limit),
       },
     };
   }
@@ -107,29 +101,17 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
   async findRowCount(
     payload: IPersistentPaginationFilterPayload<DOMAIN_MODEL_TYPE>,
   ): Promise<number> {
-    // // if (payload.filters.length === 0) {
-    // //   throw new Error('At least one filter must be provided.');
-    // // }
-    //
-    // // Build the WHERE clause with the specified logical operator
-    // const whereClauses = payload.filters.map(
-    //   (filter, index) => `"${filter.key}" ${filter.operator} '${filter.value}'`,
-    // );
-    // const whereClause = whereClauses.join(
-    //   ` ${payload.logicalOperator || 'and'} `,
-    // );
-    //
-    // // Construct the SQL query
-    // const query = `
-    //   SELECT COUNT(*)
-    //   FROM ${this.tableName}
-    //   WHERE ${whereClause};
-    // `;
-    //
-    // const result = await this.drizzleService.drizzle.execute(query);
-    // return result.rows[0].count as number;
+    const { whereClause, values } = buildWhereClause(payload.filters);
 
-    return 0;
+    // Construct the SQL query
+    const query = `
+      SELECT COUNT(*)
+      FROM ${this.tableName}
+      ${whereClause ? `WHERE ${whereClause}` : ''};
+    `;
+
+    const result = await this.executeSQL(query, values);
+    return result.rows[0].count as number;
   }
 
   /**
@@ -236,6 +218,10 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
    * @param values
    */
   executeSQL(sql: string, values: DOMAIN_MODEL_TYPE[]) {
-    return this.persistentDriver.executeSQL(sql, values);
+    try {
+      return this.persistentDriver.executeSQL(sql, values);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
 }

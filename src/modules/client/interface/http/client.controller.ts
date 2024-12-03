@@ -22,7 +22,7 @@ import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGua
 
 @Controller('clients')
 @UseGuards(AdminAuthGuard)
-@ApiSecurity('x-modules-key')
+@ApiSecurity('x-api-key')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 

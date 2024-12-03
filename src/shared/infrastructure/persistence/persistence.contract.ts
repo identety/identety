@@ -84,7 +84,7 @@ export interface IPersistentDriver<DOMAIN_MODEL> {
     sql: string,
     values: Array<any>,
   ): Promise<{
-    rows: Array<DOMAIN_MODEL>;
+    rows: Array<DOMAIN_MODEL | any>;
   }>;
 
   drizzleService?: DrizzleService;

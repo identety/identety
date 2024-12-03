@@ -43,13 +43,17 @@ export class UserService {
    * Creates a new user.
    * @param payload
    */
-  async createUser(payload: CreateUserDto): Promise<User> {
-    return this.repository.createOne({
-      ...payload,
-      passwordHash: payload.password
-        ? PasswordUtil.hashPassword(payload.password)
-        : undefined,
-    });
+  async createUser(
+    payload: CreateUserDto,
+  ): Promise<Omit<User, 'passwordHash'>> {
+    if (payload.password) {
+      payload['passwordHash'] = PasswordUtil.hashPassword(payload.password);
+      delete payload?.password;
+    }
+
+    const result = await this.repository.createOne(payload);
+    delete result['password_hash'];
+    return result;
   }
 
   /**
