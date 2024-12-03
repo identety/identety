@@ -18,7 +18,7 @@ import {
 import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
 import { ClientService } from '@/modules/client/application/services/client.service';
 import { CreateClientDto, UpdateClientDto } from './dtos/client.dto';
-import { AdminAuthGuard } from '@/shared/interface/http/guards/AdminGuard';
+import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 
 @Controller('clients')
 @UseGuards(AdminAuthGuard)

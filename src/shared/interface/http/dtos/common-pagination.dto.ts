@@ -23,10 +23,21 @@ export class CommonPaginationDto {
   columns?: string;
 }
 
+class PaginationMeta {
+  @ApiProperty()
+  total: number;
+
+  @ApiProperty()
+  limit: number;
+
+  @ApiProperty()
+  page: number;
+}
+
 export class CommonPaginationResponseDto<T> {
   @ApiProperty()
   nodes: T[];
 
-  // @ApiProperty({ type: Number, default: 10, required: false })
-  // meta: PaginationMeta;
+  @ApiProperty({ type: Number, default: 10, required: false })
+  meta: PaginationMeta;
 }
