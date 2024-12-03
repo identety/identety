@@ -2,14 +2,16 @@
 import {
   IsArray,
   IsEnum,
+  IsIn,
   IsObject,
   IsOptional,
   IsString,
   IsUrl,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
 
 export enum ClientType {
   PUBLIC = 'public',
@@ -99,3 +101,53 @@ export class CreateClientDto {
 }
 
 export class UpdateClientDto extends OmitType(CreateClientDto, ['type']) {}
+
+export class ClientListQueryDto extends CommonPaginationDto {
+  @ApiProperty({
+    description: 'Comma separated column names',
+    example: 'id,client_id,name,type',
+    enum: [
+      'id',
+      'client_id',
+      'client_secret',
+      'name',
+      'type',
+      'redirect_uris',
+      'allowed_scopes',
+      'allowed_grants',
+      'is_active',
+      'require_pkce',
+      'settings',
+      'tenant_id',
+      'created_at',
+      'updated_at',
+    ],
+  })
+  @IsOptional()
+  // @IsString()
+  @IsIn(
+    [
+      'id',
+      'client_id',
+      'client_secret',
+      'name',
+      'type',
+      'redirect_uris',
+      'allowed_scopes',
+      'allowed_grants',
+      'is_active',
+      'require_pkce',
+      'settings',
+      'tenant_id',
+      'created_at',
+      'updated_at',
+    ],
+    { each: true },
+  )
+  @Transform(({ value }) =>
+    typeof value === 'string'
+      ? value.split(',').map((col) => col.trim())
+      : value,
+  )
+  columns?: string[];
+}

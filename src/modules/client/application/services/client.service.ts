@@ -14,6 +14,7 @@ import {
   UpdateClientDomainDto,
 } from '../../domain/models/client';
 import { IdGeneratorUtil } from '@/shared/utils/id-generator.util';
+import { ClientListQueryDto } from '@/modules/client/interface/http/dtos/client.dto';
 
 @Injectable()
 export class ClientService {
@@ -93,11 +94,20 @@ export class ClientService {
     }
   }
 
-  findAllClientsWithPagination(queries: CommonPaginationDto) {
+  findAllClientsWithPagination(queries: ClientListQueryDto) {
+    const defaultColumns = [
+      'id',
+      'client_id',
+      'name',
+      'type',
+      'created_at',
+      'updated_at',
+    ];
     return this.clientRepository.findAllWithPagination({
       limit: queries.limit,
       page: queries.page,
       orderBy: [{ key: queries.sortBy as any, direction: queries.sort }],
+      columns: (queries?.columns as any) || defaultColumns,
     });
   }
 

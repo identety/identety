@@ -15,9 +15,12 @@ import {
   ClientResponseSwagger,
   PaginatedClientSwaggerModel,
 } from './dtos/client-response.swagger';
-import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
 import { ClientService } from '@/modules/client/application/services/client.service';
-import { CreateClientDto, UpdateClientDto } from './dtos/client.dto';
+import {
+  ClientListQueryDto,
+  CreateClientDto,
+  UpdateClientDto,
+} from './dtos/client.dto';
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 
 @Controller('clients')
@@ -29,7 +32,7 @@ export class ClientController {
   @Get()
   @ClientResponseSwagger.GetClientList()
   index(
-    @Query() queries: CommonPaginationDto,
+    @Query() queries: ClientListQueryDto,
   ): Promise<PaginatedClientSwaggerModel> {
     return this.clientService.findAllClientsWithPagination(queries);
   }

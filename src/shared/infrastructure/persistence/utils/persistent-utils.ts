@@ -55,20 +55,19 @@ export const buildOrderByClause = <T>(
 };
 
 export const buildSetClause = <T>(data: Partial<T>): string => {
-  const setClause = Object.keys(data)
-    .map((key, index) => `${key} = $${index + 1}`)
+  return Object.keys(data)
+    .map((key) => `${toSnakeCase(key)} = ${formatSqlValue(data[key])}`)
     .join(', ');
-  return setClause;
 };
 
-export const makeColumnsSnakeCase = (columns: string[]): string => {
-  function toSnakeCase(str: string): string {
-    return str
-      .replace(/([A-Z])/g, '_$1')
-      .replace(/^_/, '')
-      .toLowerCase();
-  }
+function toSnakeCase(str: string): string {
+  return str
+    .replace(/([A-Z])/g, '_$1')
+    .replace(/^_/, '')
+    .toLowerCase();
+}
 
+export const makeColumnsSnakeCase = (columns: string[]): string => {
   return columns?.length
     ? columns
         .map((c) => `"${c.toString()}"`)
@@ -76,3 +75,27 @@ export const makeColumnsSnakeCase = (columns: string[]): string => {
         .join(', ')
     : '*';
 };
+
+export function formatSqlValue(value: any): string {
+  if (value === null) return 'NULL';
+  if (typeof value === 'number') return value.toString();
+  if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
+  if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
+  if (typeof value === 'object') {
+    const isArray = Object.prototype.toString.call(value) == '[object Array]';
+
+    if (isArray) {
+      return `ARRAY[${value.map((v) => formatSqlValue(v)).join(',')}]`;
+    } else {
+      return `JSONB '${JSON.stringify(value)}'`;
+    }
+  } // throw new Error(`Unsupported value type: ${typeof value}`);
+  return value;
+}
+
+export function buildSafeQuery(sql: string, values: any[]): string {
+  return sql.replace(/\$(\d+)/g, (_, index) => {
+    const value = values[parseInt(index, 10) - 1];
+    return formatSqlValue(value);
+  });
+}

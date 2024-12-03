@@ -17,10 +17,6 @@ export class CommonPaginationDto {
   @ApiProperty({ enum: ['asc', 'desc'], default: 'desc', required: false })
   @IsOptional()
   sort: 'asc' | 'desc';
-
-  @ApiProperty({ type: String, required: false })
-  @IsOptional()
-  columns?: string;
 }
 
 class PaginationMeta {
