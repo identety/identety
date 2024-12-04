@@ -7,7 +7,7 @@ import process from 'node:process';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      // envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     PersistenceModule,
   ],
