@@ -9,8 +9,6 @@ A comprehensive Identity Provider implementing OAuth2 and OpenID Connect (OIDC) 
 1. Create `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
-
 services:
  app:
    image: identety/identety:latest
