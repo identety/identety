@@ -1,0 +1,17 @@
+{
+  "name": "identety-tools",
+  "version": "1.0.0",
+  "description": "These are the tools used for various helping tasks like generating migrations, those are not part of the main codebase.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "kingrayhan",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.29.1",
+    "drizzle-orm": "^0.37.0"
+  }
+}

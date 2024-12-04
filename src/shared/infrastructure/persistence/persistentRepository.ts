@@ -1,9 +1,6 @@
 import {
-  DatabaseTableName,
-  drizzleSchemaTableMap,
-} from '@/shared/infrastructure/persistence/drizzle/schemas';
-import {
   AppPaginationResponseDto,
+  DatabaseTableName,
   IPagination,
   IPersistentDriver,
   IPersistentFilterPayload,
@@ -200,16 +197,6 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
      `;
 
     return this.executeSQL(sql, values);
-  }
-
-  //------------------------------------
-  // Utils
-  //------------------------------------
-  buildSelectFields(fields: string[]) {
-    return fields.reduce((acc, field) => {
-      acc[field] = drizzleSchemaTableMap[this.tableName][field];
-      return acc;
-    }, {} as any);
   }
 
   /**

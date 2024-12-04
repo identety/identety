@@ -1,8 +1,4 @@
-import {
-  clientsTable,
-  tenantsTable,
-  usersTable,
-} from '@/shared/infrastructure/persistence/drizzle/schemas/schemas';
+import { clientsTable, tenantsTable, usersTable } from './schemas/schemas';
 
 export * from './schemas/schemas';
 

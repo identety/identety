@@ -4,32 +4,41 @@ import * as request from 'supertest';
 import { AppModule } from '@/app.module';
 import { TEST_ENV } from '@/shared/test-helper/test.env';
 import { ClientType, GrantType } from '../dtos/client.dto';
-import { Pool } from 'pg';
-import * as process from 'node:process';
+import { PersistenceModule } from '@/shared/infrastructure/persistence/persistence.module';
+import { PersistentDriverService } from '@/shared/infrastructure/persistence/persistent-driver.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('ClientController (e2e)', () => {
   let app: INestApplication;
-  const dbClient = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
+  let persistentDriverService: PersistentDriverService<any>;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        AppModule,
+        PersistenceModule,
+      ],
     }).compile();
 
     app = moduleRef.createNestApplication();
-
+    persistentDriverService = app.get(PersistentDriverService);
     app.useGlobalPipes(new ValidationPipe());
 
     // truncate tables
-    await dbClient.query(`TRUNCATE TABLE clients RESTART IDENTITY CASCADE`);
+    await persistentDriverService.executeSQL(
+      `TRUNCATE TABLE clients RESTART IDENTITY CASCADE`,
+      [],
+    );
 
     await app.init();
   });
 
   afterAll(async () => {
-    await dbClient.query(`TRUNCATE TABLE clients RESTART IDENTITY CASCADE`);
+    await persistentDriverService.executeSQL(
+      `TRUNCATE TABLE clients RESTART IDENTITY CASCADE`,
+      [],
+    );
   });
 
   describe('POST /clients', () => {

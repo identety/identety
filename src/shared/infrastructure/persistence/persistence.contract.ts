@@ -1,5 +1,3 @@
-import { DrizzleService } from '@/shared/infrastructure/persistence/drizzle/drizzle.service';
-
 interface PaginationMeta {
   totalCount: number;
   currentPage: number;
@@ -86,6 +84,10 @@ export interface IPersistentDriver<DOMAIN_MODEL> {
   ): Promise<{
     rows: Array<DOMAIN_MODEL | any>;
   }>;
+}
 
-  drizzleService?: DrizzleService;
+export enum DatabaseTableName {
+  tenants = 'tenants',
+  clients = 'clients',
+  users = 'users',
 }
