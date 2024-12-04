@@ -2,6 +2,60 @@
 
 A comprehensive Identity Provider implementing OAuth2 and OpenID Connect (OIDC) protocols with multi-tenant support.
 
+
+## Self-Hosted Deployment Guide
+### Docker Compose (Recommended)
+
+1. Create `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+ app:
+   image: identety/identety:latest
+   ports:
+     - "3000:3000"
+   environment:
+     - DATABASE_URL=postgresql://postgres:password@db:5432/identety
+     - API_KEY=your-secure-api-key
+   depends_on:
+     - db
+
+ db:
+   image: postgres:15
+   environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=password
+     - POSTGRES_DB=identety
+   volumes:
+     - postgres_data:/var/lib/postgresql/data
+   ports:
+     - "5432:5432"
+
+volumes:
+ postgres_data:
+```
+
+2. Start services:
+
+```bash
+docker-compose up -d
+```
+
+### Manual Docker Setup
+```bash
+docker run -d \
+  --name identety \
+  -p 3000:3000 \
+  -e DATABASE_URL=<your-database-url> \
+  -e API_KEY=your-secure-api-key \
+  identety/identety:latest
+
+## Change <your-database-url> to your database URL
+```
+
+
 ## Features
 
 ### Multi-tenancy
