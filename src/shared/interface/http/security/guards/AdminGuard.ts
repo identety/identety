@@ -31,11 +31,13 @@ export class AdminAuthGuard implements CanActivate {
 
     // Self-hosted (API Key)
     const apiKey = request.headers['x-api-key'] as string;
+
     if (!apiKey) {
       throw new UnauthorizedException('API key required');
     }
 
-    const validApiKey = this.configService.get<string>('ADMIN_API_KEY');
+    const validApiKey = this.configService.get<string>('API_KEY');
+
     if (apiKey !== validApiKey) {
       throw new UnauthorizedException('Invalid API key');
     }

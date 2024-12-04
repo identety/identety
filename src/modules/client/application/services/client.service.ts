@@ -59,11 +59,11 @@ export class ClientService {
           // id: '',
           clientId: '',
           clientSecret: '',
-          requirePkce: true,
+          requirePkce: false,
           allowedGrants: ['client_credentials'],
           type: 'm2m',
           allowedScopes: ['offline_access', 'identety:god'],
-          redirectUris: [''],
+          redirectUris: [],
           settings: {
             accessTokenTTL: 60 * 60 * 1000,
             refreshTokenTTL: 60 * 60 * 24 * 7 * 1000,

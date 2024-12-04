@@ -85,6 +85,7 @@ export function formatSqlValue(value: any): string {
     const isArray = Object.prototype.toString.call(value) == '[object Array]';
 
     if (isArray) {
+      if (value.length === 0) return `'{}'`;
       return `ARRAY[${value.map((v) => formatSqlValue(v)).join(',')}]`;
     } else {
       return `JSONB '${JSON.stringify(value)}'`;

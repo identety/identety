@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PersistenceModule } from '@/shared/infrastructure/persistence/persistence.module';
-
-export const TEST_ENV = {
-  // DATABASE_URL: 'postgresql://test:test@localhost:5432/test_db',
-  JWT_SECRET: 'test-secret',
-  API_KEY: 'test-api-key',
-  NODE_ENV: 'test',
-  PORT: 3000,
-};
+import process from 'node:process';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [() => TEST_ENV] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+    }),
     PersistenceModule,
   ],
   exports: [ConfigModule, PersistenceModule],

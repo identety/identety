@@ -10,7 +10,7 @@ import { CreateUserDto } from './dtos/user.dto';
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 import { ApiSecurity } from '@nestjs/swagger';
 
-@Controller('user')
+@Controller('users')
 @UseGuards(AdminAuthGuard)
 @ApiSecurity('x-api-key')
 export class UserController {

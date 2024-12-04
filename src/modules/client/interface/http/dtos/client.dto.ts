@@ -3,6 +3,7 @@ import {
   IsArray,
   IsEnum,
   IsIn,
+  IsNotEmpty,
   IsObject,
   IsOptional,
   IsString,
@@ -47,11 +48,13 @@ export class ClientSettings {
 
 export class CreateClientDto {
   @ApiProperty({ description: 'Client Name' })
+  @IsNotEmpty()
   @IsString()
   name: string;
 
   @ApiProperty({ enum: ClientType, description: 'Client type' })
   @IsEnum(ClientType)
+  @IsNotEmpty()
   type: ClientType;
 
   @ApiProperty({
@@ -86,7 +89,7 @@ export class CreateClientDto {
   @IsArray()
   @IsOptional()
   @IsEnum(GrantType, { each: true })
-  allowedGrants: GrantType[];
+  allowedGrants?: GrantType[];
 
   @ApiProperty({
     type: ClientSettings,
