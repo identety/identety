@@ -50,7 +50,7 @@ jobs:
           done
           echo "PostgreSQL is ready!"
 
-      - name: Run Drizzle Migrations
+      - name: Run Database Migrations
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/testdb
         run: |
@@ -58,12 +58,13 @@ jobs:
           npx drizzle-kit migrate
           
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm run test
 
       - name: Run e2e tests
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/testdb
+          API_KEY: test-api-key
         run: npm run test:e2e
 
 #      - name: Check linting
