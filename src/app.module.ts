@@ -7,13 +7,12 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '@/modules/user/user.module';
 import { OrgModule } from '@/modules/org/org.module';
 import { RoleModule } from '@/modules/role/role.module';
-import * as process from 'node:process';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      // envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
 
     //
