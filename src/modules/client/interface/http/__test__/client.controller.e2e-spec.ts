@@ -86,41 +86,44 @@ describe('ClientController (e2e)', () => {
           });
       });
 
-      // M2M Client tests
-      it('should create m2m client with client credentials grant', () => {
-        return (
-          request(app.getHttpServer())
-            .post('/clients')
-            .set('x-api-key', TEST_ENV.API_KEY)
-            .send(validM2MClient)
-            // .expect(201)
-            .expect((res) => {
-              console.log(res.body);
-              expect(res.body['client_id']).toContain('m2m_');
-              expect(res.body['client_secret']).toContain('m2m_secret_');
-              expect(res.body.type).toBe(ClientType.M2M);
-              expect(res.body['require_pkce']).toBe(false);
-              // expect(res.body['redirect_uris']).toStrictEqual([]);
-              expect(res.body['allowed_grants']).toStrictEqual([
-                GrantType.CLIENT_CREDENTIALS,
-              ]);
-            })
-        );
+      // Private Client tests
+      it('should create private client without client secret', () => {
+        return request(app.getHttpServer())
+          .post('/clients')
+          .set('x-api-key', TEST_ENV.API_KEY)
+          .send(validPrivateClient)
+          .expect(201)
+          .expect((res) => {
+            expect(res.body['id']).toBeDefined();
+            expect(res.body['client_id']).toContain('private_');
+            expect(res.body['client_secret']).toContain('private_secret_');
+            expect(res.body.type).toBe(ClientType.PRIVATE);
+            expect(res.body['require_pkce']).toBe(false);
+            expect(res.body['redirect_uris']).toStrictEqual(
+              validPrivateClient.redirectUris,
+            );
+          });
       });
 
-      // Validation tests
-      // it('should require redirect URIs for public client', () => {
-      //   const invalidPublicClient = {
-      //     ...validPublicClient,
-      //     redirectUris: [],
-      //   };
-      //
-      //   return request(app.getHttpServer())
-      //     .post('/clients')
-      //     .set('x-api-key', TEST_ENV.API_KEY)
-      //     .send(invalidPublicClient)
-      //     .expect(400);
-      // });
+      // M2M Client tests
+      it('should create m2m client with client credentials grant', () => {
+        return request(app.getHttpServer())
+          .post('/clients')
+          .set('x-api-key', TEST_ENV.API_KEY)
+          .send(validM2MClient)
+          .expect(201)
+          .expect((res) => {
+            // console.log(res.body);
+            expect(res.body['client_id']).toContain('m2m_');
+            expect(res.body['client_secret']).toContain('m2m_secret_');
+            expect(res.body.type).toBe(ClientType.M2M);
+            expect(res.body['require_pkce']).toBe(false);
+            // expect(res.body['redirect_uris']).toStrictEqual([]);
+            expect(res.body['allowed_grants']).toStrictEqual([
+              GrantType.CLIENT_CREDENTIALS,
+            ]);
+          });
+      });
     });
   });
 

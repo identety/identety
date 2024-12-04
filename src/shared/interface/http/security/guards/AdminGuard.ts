@@ -38,6 +38,9 @@ export class AdminAuthGuard implements CanActivate {
 
     const validApiKey = this.configService.get<string>('API_KEY');
 
+    // console.log('validApiKey', validApiKey);
+    // console.log('passedApiKey', apiKey);
+
     if (apiKey !== validApiKey) {
       throw new UnauthorizedException('Invalid API key');
     }
