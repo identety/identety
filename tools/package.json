@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.29.1",
-    "drizzle-orm": "^0.37.0"
+    "drizzle-orm": "^0.37.0",
+    "pg": "^8.13.1"
   }
 }

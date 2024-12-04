@@ -45,7 +45,7 @@ docker-compose up -d
 
 ### Manual Docker Setup
 ```bash
-docker run -d \
+docker run \
   --name identety \
   -p 3000:3000 \
   -e DATABASE_URL=<your-database-url> \
@@ -53,6 +53,7 @@ docker run -d \
   identety/identety:latest
 
 ## Change <your-database-url> to your database URL
+## Exmaple: postgresql://rayhan:rayhan123@host.docker.internal:5432/identety
 ```
 
 
