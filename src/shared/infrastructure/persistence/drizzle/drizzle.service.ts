@@ -16,7 +16,6 @@ export class DrizzleService implements OnModuleInit {
   constructor(private readonly config: ConfigService) {}
 
   async onModuleInit() {
-    console.log('DrizzleService.onModuleInit');
     this.drizzle = this.init();
   }
 

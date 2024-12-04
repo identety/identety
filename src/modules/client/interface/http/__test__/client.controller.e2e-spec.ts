@@ -4,9 +4,14 @@ import * as request from 'supertest';
 import { AppModule } from '@/app.module';
 import { TEST_ENV } from '@/shared/test-helper/test.env';
 import { ClientType, GrantType } from '../dtos/client.dto';
+import { Pool } from 'pg';
+import * as process from 'node:process';
 
 describe('ClientController (e2e)', () => {
   let app: INestApplication;
+  const dbClient = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -14,8 +19,17 @@ describe('ClientController (e2e)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
+
     app.useGlobalPipes(new ValidationPipe());
+
+    // truncate tables
+    await dbClient.query(`TRUNCATE TABLE clients RESTART IDENTITY CASCADE`);
+
     await app.init();
+  });
+
+  afterAll(async () => {
+    await dbClient.query(`TRUNCATE TABLE clients RESTART IDENTITY CASCADE`);
   });
 
   describe('POST /clients', () => {
@@ -140,16 +154,16 @@ describe('ClientController (e2e)', () => {
   //       });
   //   });
   //
-  //   it('should filter columns', () => {
-  //     return request(app.getHttpServer())
-  //       .get('/clients?columns=id,name,type')
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .expect(200)
-  //       .expect((res) => {
-  //         const client = res.body.nodes[0];
-  //         expect(Object.keys(client)).toEqual(['id', 'name', 'type']);
-  //       });
-  //   });
+  //   // it('should filter columns', () => {
+  //   //   return request(app.getHttpServer())
+  //   //     .get('/clients?columns=id,name,type')
+  //   //     .set('x-api-key', TEST_ENV.API_KEY)
+  //   //     .expect(200)
+  //   //     .expect((res) => {
+  //   //       const client = res.body.nodes[0];
+  //   //       expect(Object.keys(client)).toEqual(['id', 'name', 'type']);
+  //   //     });
+  //   // });
   // });
 
   // describe('GET /clients/:id', () => {
