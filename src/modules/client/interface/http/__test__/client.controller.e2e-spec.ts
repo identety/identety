@@ -221,45 +221,55 @@ describe('ClientController (e2e)', () => {
     });
   });
 
-  // describe('PATCH /clients/:id', () => {
-  //   let clientId: string;
-  //
-  //   beforeAll(async () => {
-  //     const res = await request(app.getHttpServer())
-  //       .post('/clients')
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .send({
-  //         name: 'Test Client',
-  //         type: ClientType.PRIVATE,
-  //       });
-  //     clientId = res.body.id;
-  //   });
-  //
-  //   it('should update client', () => {
-  //     return request(app.getHttpServer())
-  //       .patch(`/clients/${clientId}`)
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .send({
-  //         name: 'Updated Client',
-  //         allowedScopes: ['openid'],
-  //       })
-  //       .expect(200)
-  //       .expect((res) => {
-  //         expect(res.body.name).toBe('Updated Client');
-  //         expect(res.body.allowedScopes).toEqual(['openid']);
-  //       });
-  //   });
-  //
-  //   it('should not allow updating type', () => {
-  //     return request(app.getHttpServer())
-  //       .patch(`/clients/${clientId}`)
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .send({
-  //         type: ClientType.PUBLIC,
-  //       })
-  //       .expect(400);
-  //   });
-  // });
+  describe('PATCH /clients/:id', () => {
+    let clientId: string;
+
+    beforeAll(async () => {
+      const res = await request(app.getHttpServer())
+        .post('/clients')
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          name: 'Test Client',
+          type: ClientType.PRIVATE,
+        });
+      clientId = res.body.id;
+    });
+
+    it('should update client', () => {
+      return request(app.getHttpServer())
+        .patch(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          name: 'Updated Client',
+          allowedScopes: ['openid'],
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.name).toBe('Updated Client');
+          expect(res.body['allowed_scopes']).toEqual(['openid']);
+        });
+    });
+
+    it('should not allow updating type', () => {
+      return request(app.getHttpServer())
+        .patch(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          type: ClientType.PUBLIC,
+        })
+        .expect(400);
+    });
+
+    it('should not allow updating not allowed scopes', () => {
+      return request(app.getHttpServer())
+        .patch(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          allowedScopes: ['client_credentials'],
+        })
+        .expect(400);
+    });
+  });
 
   // describe('DELETE /clients/:id', () => {
   //   let clientId: string;
