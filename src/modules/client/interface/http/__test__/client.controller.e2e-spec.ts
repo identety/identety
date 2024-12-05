@@ -271,34 +271,34 @@ describe('ClientController (e2e)', () => {
     });
   });
 
-  // describe('DELETE /clients/:id', () => {
-  //   let clientId: string;
-  //
-  //   beforeAll(async () => {
-  //     const res = await request(app.getHttpServer())
-  //       .post('/clients')
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .send({
-  //         name: 'Test Client',
-  //         type: ClientType.PRIVATE,
-  //       });
-  //     clientId = res.body.id;
-  //   });
-  //
-  //   it('should delete client', () => {
-  //     return request(app.getHttpServer())
-  //       .delete(`/clients/${clientId}`)
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .expect(200);
-  //   });
-  //
-  //   it('should return 404 after deletion', () => {
-  //     return request(app.getHttpServer())
-  //       .get(`/clients/${clientId}`)
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .expect(404);
-  //   });
-  // });
+  describe('DELETE /clients/:id', () => {
+    let clientId: string;
+
+    beforeAll(async () => {
+      const res = await request(app.getHttpServer())
+        .post('/clients')
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          name: 'Test Client',
+          type: ClientType.PRIVATE,
+        });
+      clientId = res.body.id;
+    });
+
+    it('should delete client', () => {
+      return request(app.getHttpServer())
+        .delete(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .expect(200);
+    });
+
+    it('should return 404 after deletion', () => {
+      return request(app.getHttpServer())
+        .get(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .expect(404);
+    });
+  });
 
   afterAll(async () => {
     await app.close();

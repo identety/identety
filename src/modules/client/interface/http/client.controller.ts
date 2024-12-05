@@ -61,7 +61,7 @@ export class ClientController {
   @Patch(':id')
   @ClientResponseSwagger.UpdateClient()
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateClientDto,
   ): Promise<ClientResponseSwagger> {
     return this.clientService.updateClient(id, payload);
@@ -69,11 +69,9 @@ export class ClientController {
 
   @Delete(':id')
   @ClientResponseSwagger.DeleteClient()
-  async destroy(@Param('id') id: string): Promise<ClientResponseSwagger> {
-    try {
-      return this.clientService.deleteClientById(id);
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+  async destroy(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ClientResponseSwagger> {
+    return this.clientService.deleteClientById(id);
   }
 }

@@ -68,8 +68,6 @@ function toSnakeCase(str: string): string {
 }
 
 export const makeColumnsSnakeCase = (columns: string[]): string => {
-  console.log({ columns });
-
   return columns?.length
     ? columns
         .map((c) => `"${c.toString()}"`)
