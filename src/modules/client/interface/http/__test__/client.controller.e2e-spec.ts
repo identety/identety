@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
+import * as crypto from 'node:crypto';
 import { AppModule } from '@/app.module';
 import { TEST_ENV } from '@/shared/test-helper/test.env';
 import { ClientType, GrantType } from '../dtos/client.dto';
