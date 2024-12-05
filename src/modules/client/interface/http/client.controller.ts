@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -39,12 +40,10 @@ export class ClientController {
 
   @Get(':id')
   @ClientResponseSwagger.GetClientById()
-  async show(@Param('id') id: string): Promise<ClientResponseSwagger> {
-    try {
-      return await this.clientService.findById(id);
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+  async show(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ClientResponseSwagger> {
+    return await this.clientService.findById(id);
   }
 
   @Post()
@@ -65,11 +64,7 @@ export class ClientController {
     @Param('id') id: string,
     @Body() payload: UpdateClientDto,
   ): Promise<ClientResponseSwagger> {
-    try {
-      return this.clientService.updateClient(id, payload);
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+    return this.clientService.updateClient(id, payload);
   }
 
   @Delete(':id')

@@ -26,6 +26,8 @@ export class PersistentDriverService<T>
   async executeSQL(sql: string, values: Array<any>): Promise<{ rows: T[] }> {
     // Escapes a single value safely
     const safeSql = buildSafeQuery(sql, values);
+    console.log(safeSql);
+
     const result = await this.pgClient.query(safeSql);
 
     return {

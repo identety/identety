@@ -69,9 +69,9 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
     payload: IPersistentPaginationFilterPayload<DOMAIN_MODEL_TYPE>,
   ) {
     // Default columns to '*' if none are provided
-    const columns = makeColumnsSnakeCase(payload.columns as any);
+    const columns = makeColumnsSnakeCase(payload?.columns as any);
     const { whereClause, values } = buildWhereClause(payload.filters);
-    const orderByClause = buildOrderByClause(payload.orderBy);
+    const orderByClause = buildOrderByClause(payload?.orderBy);
 
     // Build the SQL query with LIMIT, OFFSET, and ORDER BY
     const limit = payload.limit ?? 10; // Default limit to 10 if not provided

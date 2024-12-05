@@ -8,11 +8,13 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
+import { Param } from '@nestjs/common';
 
 export enum ClientType {
   PUBLIC = 'public',

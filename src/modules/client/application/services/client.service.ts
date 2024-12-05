@@ -95,6 +95,9 @@ export class ClientService {
   }
 
   findAllClientsWithPagination(queries: ClientListQueryDto) {
+    const defaultSortBy = 'created_at';
+    const defaultSort = 'DESC';
+
     const defaultColumns = [
       'id',
       'client_id',
@@ -103,10 +106,16 @@ export class ClientService {
       'created_at',
       'updated_at',
     ];
+
     return this.clientRepository.findAllWithPagination({
       limit: queries.limit,
       page: queries.page,
-      orderBy: [{ key: queries.sortBy as any, direction: queries.sort }],
+      orderBy: [
+        {
+          key: queries?.sortBy || (defaultSortBy as any),
+          direction: queries.sort || (defaultSort as any),
+        },
+      ],
       columns: (queries?.columns as any) || defaultColumns,
     });
   }

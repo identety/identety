@@ -46,8 +46,8 @@ export const buildOrderByClause = <T>(
   }
 
   const orderByConditions = orderBy.map(({ key, direction }) => {
-    const safeKey = `"${key.toString()}"`; // Escape column name to prevent SQL injection
-    const safeDirection = direction.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; // Ensure valid direction
+    const safeKey = `"${key?.toString()}"`; // Escape column name to prevent SQL injection
+    const safeDirection = direction?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; // Ensure valid direction
     return `${safeKey} ${safeDirection}`;
   });
 
@@ -68,6 +68,8 @@ function toSnakeCase(str: string): string {
 }
 
 export const makeColumnsSnakeCase = (columns: string[]): string => {
+  console.log({ columns });
+
   return columns?.length
     ? columns
         .map((c) => `"${c.toString()}"`)

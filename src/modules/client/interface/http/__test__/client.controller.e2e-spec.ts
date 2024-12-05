@@ -23,7 +23,13 @@ describe('ClientController (e2e)', () => {
 
     app = moduleRef.createNestApplication();
     persistentDriverService = app.get(PersistentDriverService);
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
 
     // truncate tables
     await persistentDriverService.executeSQL(
@@ -150,63 +156,70 @@ describe('ClientController (e2e)', () => {
     });
   });
 
-  // describe('GET /clients', () => {
-  //   it('should get paginated clients', () => {
-  //     return request(app.getHttpServer())
-  //       .get('/clients')
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .expect(200)
-  //       .expect((res) => {
-  //         expect(res.body).toHaveProperty('nodes');
-  //         expect(res.body).toHaveProperty('meta');
-  //         expect(Array.isArray(res.body.nodes)).toBe(true);
-  //       });
-  //   });
-  //
-  //   // it('should filter columns', () => {
-  //   //   return request(app.getHttpServer())
-  //   //     .get('/clients?columns=id,name,type')
-  //   //     .set('x-api-key', TEST_ENV.API_KEY)
-  //   //     .expect(200)
-  //   //     .expect((res) => {
-  //   //       const client = res.body.nodes[0];
-  //   //       expect(Object.keys(client)).toEqual(['id', 'name', 'type']);
-  //   //     });
-  //   // });
-  // });
+  describe('GET /clients', () => {
+    it('should get paginated clients', () => {
+      return request(app.getHttpServer())
+        .get('/clients')
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('nodes');
+          expect(res.body).toHaveProperty('meta');
+          expect(Array.isArray(res.body.nodes)).toBe(true);
+        });
+    });
 
-  // describe('GET /clients/:id', () => {
-  //   let clientId: string;
-  //
-  //   beforeAll(async () => {
-  //     // Create a client to test with
-  //     const res = await request(app.getHttpServer())
-  //       .post('/clients')
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .send({
-  //         name: 'Test Client',
-  //         type: ClientType.PRIVATE,
-  //       });
-  //     clientId = res.body.id;
-  //   });
-  //
-  //   it('should get client by id', () => {
-  //     return request(app.getHttpServer())
-  //       .get(`/clients/${clientId}`)
-  //       .set('x-api-key', TEST_ENV.API_KEY)
-  //       .expect(200)
-  //       .expect((res) => {
-  //         expect(res.body.id).toBe(clientId);
-  //       });
-  //   });
-  //
-  //   // it('should return 404 for non-existent client', () => {
-  //   //   return request(app.getHttpServer())
-  //   //     .get('/clients/non-existent-id')
-  //   //     .set('x-api-key', TEST_ENV.API_KEY)
-  //   //     .expect(404);
-  //   // });
-  // });
+    it('should filter columns', () => {
+      return (
+        request(app.getHttpServer())
+          .get('/clients?columns=id,name,type')
+          .set('x-api-key', TEST_ENV.API_KEY)
+          // .expect(200)
+          .expect((res) => {
+            const client = res.body.nodes[0];
+            const keys = Object.keys(client);
+            expect(keys).toEqual(['id', 'name', 'type']);
+          })
+      );
+    });
+  });
+
+  describe('GET /clients/:id', () => {
+    let clientId: string = '';
+
+    beforeAll(async () => {
+      // Create a client to test with
+      const res = await request(app.getHttpServer())
+        .post('/clients')
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .send({
+          name: 'Test Client',
+          type: ClientType.PRIVATE,
+        });
+      clientId = res.body.id;
+    });
+
+    it('should get client by id', () => {
+      return request(app.getHttpServer())
+        .get(`/clients/${clientId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.id).toBe(clientId);
+          expect(res.body.name).toBe('Test Client');
+          expect(res.body.type).toBe(ClientType.PRIVATE);
+        });
+    });
+
+    it('should return 404 for non-existent client', () => {
+      const nonExistentId = crypto.randomUUID();
+
+      return request(app.getHttpServer())
+        .get(`/clients/${nonExistentId}`)
+        .set('x-api-key', TEST_ENV.API_KEY)
+        .expect(404);
+    });
+  });
 
   // describe('PATCH /clients/:id', () => {
   //   let clientId: string;
