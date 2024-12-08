@@ -3,6 +3,7 @@
 /node_modules
 
 /tools/node_modules
+.docker-volumes
 
 # Logs
 logs
