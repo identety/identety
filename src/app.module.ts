@@ -13,8 +13,6 @@ import { RoleModule } from '@/modules/role/role.module';
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
-      // ignoreEnvFile: process.env.NODE_ENV === 'test',
-      // load: [() => TEST_ENV],
     }),
 
     //
