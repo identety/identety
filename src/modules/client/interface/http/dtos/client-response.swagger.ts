@@ -112,7 +112,7 @@ export class ClientResponseSwagger {
   }
   static CreateClient() {
     return applyDecorators(
-      ApiOperation({ summary: 'Create new client' }),
+      ApiOperation({ summary: 'Create client' }),
       ApiCreatedResponse({
         description: 'Client created successfully.',
         type: ClientSwaggerModel,

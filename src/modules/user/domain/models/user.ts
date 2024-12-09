@@ -1,5 +1,5 @@
 // Core User Model
-export interface User {
+export class User {
   id: string;
   tenantId?: string; // Optional, for cloud version
 
