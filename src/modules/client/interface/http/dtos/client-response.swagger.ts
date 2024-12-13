@@ -9,37 +9,10 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-
-export class PrivateClientResponse {
-  @ApiProperty({ example: 'uuid-123' })
-  id: string;
-
-  @ApiProperty({ example: 'client_abc123' })
-  clientId: string;
-
-  @ApiProperty({ example: 'private' })
-  type: string;
-
-  @ApiProperty({ example: ['https://example.com/callback'] })
-  redirectUris: string[];
-
-  @ApiProperty({ example: ['openid', 'profile'] })
-  allowedScopes: string[];
-}
-
-export class M2MClientResponse {
-  @ApiProperty({ example: 'uuid-456' })
-  id: string;
-
-  @ApiProperty({ example: 'm2m_xyz789' })
-  clientId: string;
-
-  @ApiProperty({ example: 'm2m' })
-  type: string;
-
-  @ApiProperty({ example: ['read:users', 'write:users'] })
-  allowedScopes: string[];
-}
+import {
+  NotFoundResponseSwaggerModel,
+  UnAuthorizedResponseSwaggerModel,
+} from '@/shared/interface/http/dtos/common-swagger-responses';
 
 export class ClientResponseSwagger {
   static GetClientList() {
@@ -181,24 +154,4 @@ export class PaginatedClientSwaggerModel {
     },
   })
   meta: Record<string, any>;
-}
-class UnAuthorizedResponseSwaggerModel {
-  @ApiProperty({ example: 'Invalid API key' })
-  message: string;
-
-  @ApiProperty({ example: 401 })
-  statusCode: number;
-
-  @ApiProperty({ example: 'Unauthorized' })
-  error: string;
-}
-class NotFoundResponseSwaggerModel {
-  @ApiProperty({ example: 'Client not found' })
-  message: string;
-
-  @ApiProperty({ example: 401 })
-  statusCode: number;
-
-  @ApiProperty({ example: 'Unauthorized' })
-  error: string;
 }
