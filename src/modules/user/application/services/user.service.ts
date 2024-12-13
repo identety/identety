@@ -2,23 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PasswordUtil } from '@/shared/utils/password.util';
 import { UserRepository } from '../ports/user.repository';
 import { CreateUserDto, User } from '../../domain/models/user';
+import { UserListQueryDto } from '@/modules/user/interface/http/dtos/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly repository: UserRepository) {}
+  constructor(public readonly userRepository: UserRepository) {}
 
   /**
    * Finds a user by its ID.
    * @param id
    */
   async findById(id: string) {
-    const [user] = await this.repository.findRows({
-      filters: [{ key: 'id', operator: '=', value: id }],
+    const [user] = await this.userRepository.findRows({
+      filters: [{ key: 'id', value: id, operator: '=' }],
+      limit: 1,
     });
 
-    if (!user) {
-      throw new NotFoundException();
-    }
+    if (!user) throw new NotFoundException();
 
     return user;
   }
@@ -28,7 +28,7 @@ export class UserService {
    * @param email
    */
   async findByEmail(email: string): Promise<User> {
-    const [user] = await this.repository.findRows({
+    const [user] = await this.userRepository.findRows({
       filters: [{ key: 'email', operator: '=', value: email }],
     });
 
@@ -51,7 +51,7 @@ export class UserService {
       delete payload?.password;
     }
 
-    const result = await this.repository.createOne(payload);
+    const result = await this.userRepository.createOne(payload);
     delete result['password_hash'];
     return result;
   }
@@ -65,7 +65,7 @@ export class UserService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException();
 
-    return this.repository.updateOne(
+    return this.userRepository.updateOne(
       { filters: [{ key: 'id', value: id, operator: '=' }] },
       payload,
     );
@@ -79,7 +79,7 @@ export class UserService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException();
 
-    return this.repository.deleteRows({
+    return this.userRepository.deleteRows({
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
   }
@@ -91,7 +91,7 @@ export class UserService {
    */
   async updatePassword(id: string, password: string): Promise<boolean> {
     try {
-      await this.repository.updateOne(
+      await this.userRepository.updateOne(
         { filters: [{ key: 'id', value: id, operator: '=' }] },
         { passwordHash: PasswordUtil.hashPassword(password) },
       );
@@ -120,5 +120,35 @@ export class UserService {
     }
 
     return this.updatePassword(id, password);
+  }
+
+  /**
+   * Finds all users with pagination.
+   * @param queries
+   */
+  async getUsersWithPagination(queries: UserListQueryDto) {
+    const defaultSortBy = 'created_at';
+    const defaultSort = 'DESC';
+
+    const defaultColumns = [
+      'id',
+      'name',
+      'email',
+      'email_verified',
+      'phone_number_verified',
+      'created_at',
+    ];
+
+    return this.userRepository.findAllWithPagination({
+      limit: queries.limit,
+      page: queries.page,
+      orderBy: [
+        {
+          key: queries?.sortBy || (defaultSortBy as any),
+          direction: queries.sort || (defaultSort as any),
+        },
+      ],
+      columns: (queries?.columns as any) || defaultColumns,
+    });
   }
 }

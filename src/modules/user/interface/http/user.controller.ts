@@ -2,11 +2,15 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../../application/services/user.service';
-import { CreateUserDto } from './dtos/user.dto';
+import { CreateUserDto, UserListQueryDto } from './dtos/user.dto';
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 import { ApiSecurity } from '@nestjs/swagger';
 
@@ -25,12 +29,18 @@ export class UserController {
     }
   }
 
-  // @Get()
-  // async getUser() {}
-  //
-  // @Get(':id')
-  // async getUserById(@Param('id') id: string) {}
-  //
+  @Get()
+  async getUsers(@Query() query: UserListQueryDto) {
+    return await this.service.getUsersWithPagination(query);
+  }
+
+  @Get(':id')
+  async getUserById(@Param('id', ParseUUIDPipe) userId: string) {
+    const user = await this.service.findById(userId);
+    delete user['password_hash'];
+    return user;
+  }
+
   // @Put(':id')
   // async updateUser(@Param('id') id: string) {}
   //

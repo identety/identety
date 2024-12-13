@@ -1,12 +1,14 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsString,
-  IsOptional,
-  MinLength,
+  IsIn,
   IsObject,
+  IsOptional,
+  IsString,
+  MinLength,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
 
 export class UserAddressDto {
   @ApiProperty({ example: '123 Main St' })
@@ -130,4 +132,46 @@ export class UpdatePasswordDto {
   @IsString()
   @MinLength(8)
   newPassword: string;
+}
+
+export class UserListQueryDto extends CommonPaginationDto {
+  @ApiProperty({
+    description: 'Comma separated column names',
+    example:
+      'id,email,name,phone_number,address,locale,email_verified,phone_number_verified,created_at',
+    enum: [
+      'id',
+      'email',
+      'name',
+      'phone_number',
+      'address',
+      'locale',
+      'email_verified',
+      'phone_number_verified',
+      'created_at',
+      'updated_at',
+    ],
+  })
+  @IsOptional()
+  @IsIn(
+    [
+      'id',
+      'email',
+      'name',
+      'phone_number',
+      'address',
+      'locale',
+      'email_verified',
+      'phone_number_verified',
+      'created_at',
+      'updated_at',
+    ],
+    { each: true },
+  )
+  @Transform(({ value }) =>
+    typeof value === 'string'
+      ? value.split(',').map((col) => col.trim())
+      : value,
+  )
+  columns?: string[];
 }
