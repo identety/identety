@@ -45,8 +45,10 @@ describe('UserService', () => {
       const result = await service.findById('user-123');
 
       expect(result).toEqual(mockUser);
+
       expect(repository.findRows).toHaveBeenCalledWith({
         filters: [{ key: 'id', operator: '=', value: 'user-123' }],
+        limit: 1,
       });
     });
 
