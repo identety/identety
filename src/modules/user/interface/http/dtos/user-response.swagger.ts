@@ -14,6 +14,7 @@ import {
 } from '@/shared/interface/http/dtos/common-swagger-responses';
 import { IsOptional, IsString } from 'class-validator';
 
+// src/modules/users/responses/user.response.ts
 export class UserResponseSwagger {
   static GetUserList() {
     return applyDecorators(
