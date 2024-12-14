@@ -12,6 +12,7 @@ import {
   NotFoundResponseSwaggerModel,
   UnAuthorizedResponseSwaggerModel,
 } from '@/shared/interface/http/dtos/common-swagger-responses';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UserResponseSwagger {
   static GetUserList() {
@@ -19,7 +20,7 @@ export class UserResponseSwagger {
       ApiOperation({ summary: 'Get all users' }),
       ApiOkResponse({
         description: 'Users retrieved successfully',
-        type: PaginatedUsersSwaggerModel,
+        type: PaginatedUsersResponseModel,
       }),
       ApiUnauthorizedResponse({
         description: 'Unauthorized. Invalid API key.',
@@ -34,7 +35,7 @@ export class UserResponseSwagger {
         isArray: false,
         status: 200,
         description: 'Client found successfully',
-        type: UserSwaggerModel,
+        type: UserResponseModel,
       }),
       ApiUnauthorizedResponse({
         description: 'Unauthorized. Invalid API key.',
@@ -52,7 +53,7 @@ export class UserResponseSwagger {
       ApiResponse({
         status: 200,
         description: 'Client updated successfully',
-        type: UserSwaggerModel,
+        type: UserResponseModel,
       }),
       ApiUnauthorizedResponse({
         description: 'Unauthorized. Invalid API key.',
@@ -70,7 +71,7 @@ export class UserResponseSwagger {
       ApiResponse({
         status: 200,
         description: 'Client deleted successfully',
-        type: UserSwaggerModel,
+        type: UserResponseModel,
       }),
       ApiUnauthorizedResponse({
         description: 'Unauthorized. Invalid API key.',
@@ -87,7 +88,7 @@ export class UserResponseSwagger {
       ApiOperation({ summary: 'Create client' }),
       ApiCreatedResponse({
         description: 'Client created successfully.',
-        type: UserSwaggerModel,
+        type: UserResponseModel,
       }),
       ApiUnauthorizedResponse({
         description: 'Unauthorized. Invalid API key.',
@@ -104,13 +105,61 @@ export class UserResponseSwagger {
 // -----------------------------------------------------------------------------
 // Swagger Responses Models (for documentation)
 // -----------------------------------------------------------------------------
-class UserSwaggerModel {
-  @ApiProperty({ example: 'uuid-123' })
-  id: string;
+export class UserAddressResponseModel {
+  @ApiProperty({ example: '123 Main St' })
+  @IsString()
+  @IsOptional()
+  streetAddress?: string;
+
+  @ApiProperty({ example: 'New York' })
+  @IsString()
+  @IsOptional()
+  locality?: string;
+
+  @ApiProperty({ example: 'NY' })
+  @IsString()
+  @IsOptional()
+  region?: string;
+
+  @ApiProperty({ example: '10001' })
+  @IsString()
+  @IsOptional()
+  postalCode?: string;
+
+  @ApiProperty({ example: 'USA' })
+  @IsString()
+  @IsOptional()
+  country?: string;
 }
-export class PaginatedUsersSwaggerModel {
-  @ApiProperty({ type: [UserSwaggerModel] })
-  nodes: UserSwaggerModel[];
+
+class UserResponseModel {
+  @ApiProperty({ example: '43fad864-738d-4367-a012-2b8c6948c36a' })
+  id: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  name?: string;
+
+  @ApiProperty({ example: 'John' })
+  givenName?: string;
+
+  @ApiProperty({ example: 'Doe' })
+  familyName?: string;
+
+  @ApiProperty({ example: 'https://example.com/photo.jpg' })
+  picture?: string;
+
+  @ApiProperty({ example: 'en-US' })
+  locale?: string;
+
+  @ApiProperty({ type: UserAddressResponseModel })
+  address?: UserAddressResponseModel;
+
+  @ApiProperty({ example: { customField: 'value' } })
+  metadata?: Record<string, any>;
+}
+export class PaginatedUsersResponseModel {
+  @ApiProperty({ type: [UserResponseModel] })
+  nodes: UserResponseModel[];
 
   @ApiProperty({
     example: {

@@ -2,17 +2,24 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../../application/services/user.service';
-import { CreateUserDto, UserListQueryDto } from './dtos/user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UserListQueryDto,
+} from './dtos/user.dto';
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 import { ApiSecurity } from '@nestjs/swagger';
+import { UserResponseSwagger } from '@/modules/user/interface/http/dtos/user-response.swagger';
 
 @Controller('users')
 @UseGuards(AdminAuthGuard)
@@ -21,6 +28,7 @@ export class UserController {
   constructor(private readonly service: UserService) {}
 
   @Post()
+  @UserResponseSwagger.CreateClient()
   async createUser(@Body() body: CreateUserDto) {
     try {
       return this.service.createUser(body);
@@ -30,20 +38,28 @@ export class UserController {
   }
 
   @Get()
+  @UserResponseSwagger.GetUserList()
   async getUsers(@Query() query: UserListQueryDto) {
     return await this.service.getUsersWithPagination(query);
   }
 
   @Get(':id')
+  @UserResponseSwagger.GetClientById()
   async getUserById(@Param('id', ParseUUIDPipe) userId: string) {
     const user = await this.service.findById(userId);
     delete user['password_hash'];
     return user;
   }
 
-  // @Put(':id')
-  // async updateUser(@Param('id') id: string) {}
-  //
-  // @Delete(':id')
-  // async deleteUser(@Param('id') id: string) {}
+  @Put(':id')
+  @UserResponseSwagger.UpdateClient()
+  async updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+    return await this.service.updateUser(id, body);
+  }
+
+  @Delete(':id')
+  @UserResponseSwagger.DeleteClient()
+  async deleteUser(@Param('id') id: string) {
+    return await this.service.deleteUser(id);
+  }
 }

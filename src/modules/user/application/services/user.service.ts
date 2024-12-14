@@ -79,9 +79,10 @@ export class UserService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException();
 
-    return this.userRepository.deleteRows({
+    const result = await this.userRepository.deleteRows({
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
+    return result?.[0];
   }
 
   /**
