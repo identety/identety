@@ -22,5 +22,5 @@ jobs:
             cd ./apps/identety
             git clean -f
             git pull origin main --ff-only
-            docker compose down
-            docker compose up -d --build
+            sudo docker compose down
+            sudo docker compose up -d --build
