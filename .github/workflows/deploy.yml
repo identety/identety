@@ -21,6 +21,7 @@ jobs:
           script: |
             cd ./apps/identety
             git clean -f
+            sudo chown -R $USER:$USER docker-volumes/
             git pull origin main --ff-only
             docker compose down
             docker compose up -d --build
