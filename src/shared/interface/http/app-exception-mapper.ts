@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
   AppException,
   AppDuplicateException,
+  AppInvalidInputException,
 } from '@/shared/application/exceptions/appException';
 
 export class AppExceptionMapper {
@@ -18,6 +19,10 @@ export class AppExceptionMapper {
     }
 
     if (error instanceof AppDuplicateException) {
+      return new BadRequestException(error.message);
+    }
+
+    if (error instanceof AppInvalidInputException) {
       return new BadRequestException(error.message);
     }
 

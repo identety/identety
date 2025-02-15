@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ClientRepository } from '../../application/ports/client.repository';
 import {
   Client,
@@ -177,7 +173,7 @@ export class ClientService {
     if (
       payload.allowedScopes?.some((scope) => !allowedScopes.includes(scope))
     ) {
-      throw new BadRequestException(
+      throw new AppInvalidInputException(
         `Invalid scope. Allowed scopes are: ${allowedScopes.join(', ')}`,
       );
     }
@@ -187,7 +183,7 @@ export class ClientService {
     if (
       payload.allowedGrants?.some((grant) => !allowedGrants.includes(grant))
     ) {
-      throw new BadRequestException(
+      throw new AppInvalidInputException(
         `Invalid grant. Allowed grants are: ${allowedGrants.join(', ')}`,
       );
     }

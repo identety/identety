@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'node:crypto';
 import { ClientService } from '../client.service';
 import { ClientRepository } from '../../ports/client.repository';
@@ -10,6 +10,10 @@ import {
   GrantType,
   UpdateClientDomainDto,
 } from '../../../domain/models/client';
+import {
+  AppInvalidInputException,
+  AppNotFoundException,
+} from '@/shared/application/exceptions/appException';
 
 describe('ClientService', () => {
   let service: ClientService;
@@ -269,7 +273,7 @@ describe('ClientService', () => {
       repository.createOne.mockResolvedValue(mockPublicClient);
 
       await expect(service.createClient(mockPayload)).rejects.toThrow(
-        BadRequestException,
+        AppInvalidInputException,
       );
       expect(repository.createOne).not.toHaveBeenCalled();
     });
@@ -286,7 +290,7 @@ describe('ClientService', () => {
       // console.log(calledWith);
 
       await expect(service.createClient(mockPayload)).rejects.toThrow(
-        BadRequestException,
+        AppInvalidInputException,
       );
       expect(repository.createOne).not.toHaveBeenCalled();
     });
@@ -300,7 +304,7 @@ describe('ClientService', () => {
       repository.createOne.mockResolvedValue(mockPrivateClient);
 
       await expect(service.createClient(mockPayload)).rejects.toThrow(
-        BadRequestException,
+        AppInvalidInputException,
       );
       expect(repository.createOne).not.toHaveBeenCalled();
     });
@@ -326,7 +330,7 @@ describe('ClientService', () => {
       repository.findRows.mockResolvedValue([]);
 
       await expect(service.findById('non-existent-id')).rejects.toThrow(
-        NotFoundException,
+        AppNotFoundException,
       );
     });
   });
@@ -352,7 +356,7 @@ describe('ClientService', () => {
         };
 
         await expect(service.updateClient('test-id', payload)).rejects.toThrow(
-          BadRequestException,
+          AppInvalidInputException,
         );
       });
 
@@ -394,7 +398,7 @@ describe('ClientService', () => {
         };
 
         await expect(service.updateClient('test-id', payload)).rejects.toThrow(
-          BadRequestException,
+          AppInvalidInputException,
         );
       });
 
@@ -420,7 +424,7 @@ describe('ClientService', () => {
         };
 
         await expect(service.updateClient('test-id', payload)).rejects.toThrow(
-          BadRequestException,
+          AppInvalidInputException,
         );
       });
 
@@ -432,7 +436,7 @@ describe('ClientService', () => {
         };
 
         await expect(service.updateClient('test-id', payload)).rejects.toThrow(
-          BadRequestException,
+          AppInvalidInputException,
         );
       });
     });
@@ -442,7 +446,7 @@ describe('ClientService', () => {
         repository.findRows.mockResolvedValue([]); // Client not found
 
         await expect(service.updateClient('test-id', {})).rejects.toThrow(
-          NotFoundException,
+          AppNotFoundException,
         );
       });
     });
