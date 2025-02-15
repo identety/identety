@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserRepository } from '../../ports/user.repository';
 import { PasswordUtil } from '@/shared/utils/password.util';
-import { NotFoundException } from '@nestjs/common';
 import { AppNotFoundException } from '@/shared/application/exceptions/appException';
 
 describe('UserService', () => {

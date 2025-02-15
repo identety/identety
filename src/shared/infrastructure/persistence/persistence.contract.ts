@@ -90,4 +90,5 @@ export enum DatabaseTableName {
   tenants = 'tenants',
   clients = 'clients',
   users = 'users',
+  roles = 'roles',
 }

@@ -186,17 +186,19 @@ export abstract class PersistentRepository<DOMAIN_MODEL_TYPE> {
    * Deletes rows in the database based on the provided filter criteria.
    * @param payload
    */
-  deleteRows(payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>) {
+  async deleteRows(
+    payload: IPersistentFilterPayload<DOMAIN_MODEL_TYPE>,
+  ): Promise<DOMAIN_MODEL_TYPE[]> {
     const { whereClause, values } = buildWhereClause(payload.filters);
     const columns = makeColumnsSnakeCase(payload.columns as any);
 
     const sql = `
-       DELETE FROM ${this.tableName}
-       ${whereClause ? `WHERE ${whereClause}` : ''}
-       RETURNING ${columns};
-     `;
+        DELETE
+        FROM ${this.tableName} ${whereClause ? `WHERE ${whereClause}` : ''} RETURNING ${columns};
+    `;
 
-    return this.executeSQL(sql, values);
+    const result = await this.executeSQL(sql, values);
+    return result.rows as DOMAIN_MODEL_TYPE[];
   }
 
   /**

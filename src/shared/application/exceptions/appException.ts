@@ -13,8 +13,8 @@ export class AppValidationException extends AppException {
 }
 
 export class AppNotFoundException extends AppException {
-  constructor(entity?: string) {
-    super(`${entity || 'Resource'} not found`);
+  constructor(message?: string) {
+    super(message);
   }
 }
 
@@ -25,6 +25,12 @@ export class AppDuplicateException extends AppException {
 }
 
 export class AppInvalidInputException extends AppException {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class AppNotAllowedException extends AppException {
   constructor(message: string) {
     super(message);
   }

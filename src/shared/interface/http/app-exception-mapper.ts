@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  ConflictException,
+  ForbiddenException,
   NotFoundException as HttpNotFoundException,
   UnauthorizedException as HttpUnauthorizedException,
 } from '@nestjs/common';
@@ -10,6 +12,7 @@ import {
   AppException,
   AppDuplicateException,
   AppInvalidInputException,
+  AppNotAllowedException,
 } from '@/shared/application/exceptions/appException';
 
 export class AppExceptionMapper {
@@ -19,11 +22,15 @@ export class AppExceptionMapper {
     }
 
     if (error instanceof AppDuplicateException) {
-      return new BadRequestException(error.message);
+      return new ConflictException(error.message);
     }
 
     if (error instanceof AppInvalidInputException) {
       return new BadRequestException(error.message);
+    }
+
+    if (error instanceof AppNotAllowedException) {
+      return new ForbiddenException(error.message);
     }
 
     if (error instanceof AppNotFoundException) {

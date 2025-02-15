@@ -121,7 +121,7 @@ import { ${MODULE_NAME_CAPITAL}Repository } from './application/ports/${MODULE_N
 export class ${MODULE_NAME_CAPITAL}Module {}
 EOF
 
-cat > "$BASE_DIR/interface/http/__test__/${MODULE_NAME}.controller.spec.ts" << EOF
+cat > "$BASE_DIR/interface/http/__test__/${MODULE_NAME}.controller.e2e-spec.ts" << EOF
 import { Test, TestingModule } from '@nestjs/testing';
 import { ${MODULE_NAME_CAPITAL}Controller } from '../${MODULE_NAME}.controller';
 import { ${MODULE_NAME_CAPITAL}Repository } from '../../../application/ports/${MODULE_NAME}.repository';
