@@ -38,7 +38,9 @@ export class ClientController extends BaseHTTPController {
   index(
     @Query() queries: ClientListQueryDto,
   ): Promise<PaginatedClientSwaggerModel> {
-    return this.clientService.findAllClientsWithPagination(queries);
+    return this.execute(() =>
+      this.clientService.findAllClientsWithPagination(queries),
+    );
   }
 
   @Get(':id')
@@ -46,7 +48,7 @@ export class ClientController extends BaseHTTPController {
   async show(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ClientResponseSwagger> {
-    return await this.clientService.findById(id);
+    return this.execute(() => this.clientService.findById(id));
   }
 
   @Post()
@@ -54,11 +56,7 @@ export class ClientController extends BaseHTTPController {
   async create(
     @Body() payload: CreateClientDto,
   ): Promise<ClientResponseSwagger> {
-    try {
-      return this.clientService.createClient(payload);
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+    return this.execute(() => this.clientService.createClient(payload));
   }
 
   @Patch(':id')
@@ -67,7 +65,7 @@ export class ClientController extends BaseHTTPController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() payload: UpdateClientDto,
   ): Promise<ClientResponseSwagger> {
-    return this.clientService.updateClient(id, payload);
+    return this.execute(() => this.clientService.updateClient(id, payload));
   }
 
   @Delete(':id')
@@ -75,6 +73,6 @@ export class ClientController extends BaseHTTPController {
   async destroy(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ClientResponseSwagger> {
-    return this.clientService.deleteClientById(id);
+    return this.execute(() => this.clientService.deleteClientById(id));
   }
 }
