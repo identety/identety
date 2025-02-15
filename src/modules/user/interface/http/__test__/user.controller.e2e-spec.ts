@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '@/app.module';
 import { TEST_ENV } from '@/shared/test-helper/test.env';
@@ -99,7 +99,7 @@ describe('UserController (e2e)', () => {
           .post('/users')
           .set('x-api-key', TEST_ENV.API_KEY)
           .send(validUser)
-          .expect(400);
+          .expect(HttpStatus.CONFLICT);
       });
 
       it('should create user with minimal fields', () => {

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -51,7 +52,7 @@ export class UserController extends BaseHTTPController {
     });
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UserResponseSwagger.UpdateClient()
   async updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
     return this.execute(() => this.service.updateUser(id, body));
