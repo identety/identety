@@ -24,6 +24,12 @@ export class AppDuplicateException extends AppException {
   }
 }
 
+export class AppInvalidInputException extends AppException {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export class UnauthorizedException extends AppException {
   constructor(message: string = 'Unauthorized') {
     super(message);

@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommonPaginationDto } from '@/shared/interface/http/dtos/common-pagination.dto';
 import { ClientRepository } from '../../application/ports/client.repository';
 import {
   Client,
@@ -15,6 +14,10 @@ import {
 } from '../../domain/models/client';
 import { IdGeneratorUtil } from '@/shared/utils/id-generator.util';
 import { ClientListQueryDto } from '@/modules/client/interface/http/dtos/client.dto';
+import {
+  AppInvalidInputException,
+  AppNotFoundException,
+} from '@/shared/application/exceptions/appException';
 
 @Injectable()
 export class ClientService {
@@ -72,6 +75,7 @@ export class ClientService {
         };
     }
   }
+
   getAllowedGrandsForClientType(clientType: ClientType): GrantType[] {
     switch (clientType) {
       case 'public':
@@ -138,7 +142,7 @@ export class ClientService {
     if (
       payload.allowedScopes?.some((scope) => !allowedScopes.includes(scope))
     ) {
-      throw new BadRequestException(
+      throw new AppInvalidInputException(
         `Invalid scope. Allowed scopes are: ${allowedScopes.join(', ')}`,
       );
     }
@@ -148,7 +152,7 @@ export class ClientService {
     if (
       payload.allowedGrants?.some((grant) => !allowedGrants.includes(grant))
     ) {
-      throw new BadRequestException(
+      throw new AppInvalidInputException(
         `Invalid grant. Allowed grants are: ${allowedGrants.join(', ')}`,
       );
     }
@@ -204,7 +208,7 @@ export class ClientService {
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
 
-    if (!client) throw new NotFoundException();
+    if (!client) throw new AppNotFoundException();
     return client;
   }
 
@@ -218,7 +222,7 @@ export class ClientService {
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
 
-    if (!client) throw new NotFoundException();
+    if (!client) throw new AppNotFoundException();
     await this.clientRepository.deleteRows({
       filters: [{ key: 'id', value: id, operator: '=' }],
     });
