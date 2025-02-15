@@ -1,9 +1,9 @@
-// src/modules/user/application/services/__test__/user.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserRepository } from '../../ports/user.repository';
 import { PasswordUtil } from '@/shared/utils/password.util';
 import { NotFoundException } from '@nestjs/common';
+import { AppNotFoundException } from '@/shared/application/exceptions/appException';
 
 describe('UserService', () => {
   let service: UserService;
@@ -56,7 +56,7 @@ describe('UserService', () => {
       mockRepository.findRows.mockResolvedValue([]);
 
       await expect(service.findById('nonexistent')).rejects.toThrow(
-        NotFoundException,
+        AppNotFoundException,
       );
     });
   });
@@ -78,7 +78,7 @@ describe('UserService', () => {
 
       await expect(
         service.findByEmail('nonexistent@example.com'),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AppNotFoundException);
     });
   });
 
@@ -128,7 +128,7 @@ describe('UserService', () => {
 
       await expect(
         service.updateUser('nonexistent', { name: 'New Name' }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AppNotFoundException);
     });
   });
 

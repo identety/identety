@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PasswordUtil } from '@/shared/utils/password.util';
 import { UserRepository } from '../ports/user.repository';
 import { CreateUserDto, User } from '../../domain/models/user';
 import { UserListQueryDto } from '@/modules/user/interface/http/dtos/user.dto';
+import {
+  AppDuplicateException,
+  AppNotFoundException,
+} from '@/shared/application/exceptions/appException';
 
 @Injectable()
 export class UserService {
@@ -18,7 +22,7 @@ export class UserService {
       limit: 1,
     });
 
-    if (!user) throw new NotFoundException();
+    if (!user) throw new AppNotFoundException();
 
     return user;
   }
@@ -33,7 +37,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException();
+      throw new AppNotFoundException();
     }
 
     return user;
@@ -46,6 +50,15 @@ export class UserService {
   async createUser(
     payload: CreateUserDto,
   ): Promise<Omit<User, 'passwordHash'>> {
+    const [existedUser] = await this.userRepository.findRows({
+      filters: [{ key: 'email', value: payload.email, operator: '=' }],
+      limit: 1,
+    });
+
+    if (existedUser) {
+      throw new AppDuplicateException('User already exists');
+    }
+
     if (payload.password) {
       payload['passwordHash'] = PasswordUtil.hashPassword(payload.password);
       delete payload?.password;
@@ -63,7 +76,7 @@ export class UserService {
    */
   async updateUser(id: string, payload: CreateUserDto): Promise<User> {
     const user = await this.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new AppNotFoundException();
 
     return this.userRepository.updateOne(
       { filters: [{ key: 'id', value: id, operator: '=' }] },
@@ -77,7 +90,7 @@ export class UserService {
    */
   async deleteUser(id: string) {
     const user = await this.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new AppNotFoundException();
 
     const result = await this.userRepository.deleteRows({
       filters: [{ key: 'id', value: id, operator: '=' }],
@@ -114,7 +127,7 @@ export class UserService {
     password: string,
   ): Promise<boolean> {
     const user = await this.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new AppNotFoundException();
 
     if (!PasswordUtil.verifyPassword(oldPassword, user.passwordHash)) {
       throw new Error('Incorrect old password');

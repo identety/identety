@@ -1,0 +1,2 @@
+- check is user model consistent in everywhere, domain, http-dtos, etc.
+- make all properties snake_case

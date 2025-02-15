@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -20,46 +19,47 @@ import {
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 import { ApiSecurity } from '@nestjs/swagger';
 import { UserResponseSwagger } from '@/modules/user/interface/http/dtos/user-response.swagger';
+import { BaseController } from '@/shared/interface/http/base.controller';
 
 @Controller('users')
 @UseGuards(AdminAuthGuard)
 @ApiSecurity('x-api-key')
-export class UserController {
-  constructor(private readonly service: UserService) {}
+export class UserController extends BaseController {
+  constructor(private readonly service: UserService) {
+    super();
+  }
 
   @Post()
   @UserResponseSwagger.CreateClient()
   async createUser(@Body() body: CreateUserDto) {
-    try {
-      return this.service.createUser(body);
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+    return this.execute(() => this.service.createUser(body));
   }
 
   @Get()
   @UserResponseSwagger.GetUserList()
   async getUsers(@Query() query: UserListQueryDto) {
-    return await this.service.getUsersWithPagination(query);
+    return this.execute(() => this.service.getUsersWithPagination(query));
   }
 
   @Get(':id')
   @UserResponseSwagger.GetClientById()
   async getUserById(@Param('id', ParseUUIDPipe) userId: string) {
-    const user = await this.service.findById(userId);
-    delete user['password_hash'];
-    return user;
+    return this.execute(async () => {
+      const user = await this.service.findById(userId);
+      delete user['password_hash'];
+      return user;
+    });
   }
 
   @Put(':id')
   @UserResponseSwagger.UpdateClient()
   async updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return await this.service.updateUser(id, body);
+    return this.execute(() => this.service.updateUser(id, body));
   }
 
   @Delete(':id')
   @UserResponseSwagger.DeleteClient()
   async deleteUser(@Param('id') id: string) {
-    return await this.service.deleteUser(id);
+    return this.execute(() => this.service.deleteUser(id));
   }
 }
