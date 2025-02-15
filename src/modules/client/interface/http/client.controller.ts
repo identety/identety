@@ -23,12 +23,15 @@ import {
   UpdateClientDto,
 } from './dtos/client.dto';
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
+import { BaseHTTPController } from '@/shared/interface/http/baseHTTPController';
 
 @Controller('clients')
 @UseGuards(AdminAuthGuard)
 @ApiSecurity('x-api-key')
-export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+export class ClientController extends BaseHTTPController {
+  constructor(private readonly clientService: ClientService) {
+    super();
+  }
 
   @Get()
   @ClientResponseSwagger.GetClientList()

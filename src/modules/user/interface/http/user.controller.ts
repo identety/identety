@@ -19,12 +19,12 @@ import {
 import { AdminAuthGuard } from '@/shared/interface/http/security/guards/AdminGuard';
 import { ApiSecurity } from '@nestjs/swagger';
 import { UserResponseSwagger } from '@/modules/user/interface/http/dtos/user-response.swagger';
-import { BaseController } from '@/shared/interface/http/base.controller';
+import { BaseHTTPController } from '@/shared/interface/http/baseHTTPController';
 
 @Controller('users')
 @UseGuards(AdminAuthGuard)
 @ApiSecurity('x-api-key')
-export class UserController extends BaseController {
+export class UserController extends BaseHTTPController {
   constructor(private readonly service: UserService) {
     super();
   }
